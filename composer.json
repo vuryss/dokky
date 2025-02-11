@@ -1,0 +1,28 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Dokky\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dokky\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.7",
+        "justinrainbow/json-schema": "^6.1",
+        "symfony/serializer": "^7.2",
+        "vuryss/serializer": "^1.9"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require": {
+        "symfony/property-info": "^7.2",
+        "phpstan/phpdoc-parser": "^2.0",
+        "phpdocumentor/reflection-docblock": "^5.6"
+    }
+}
