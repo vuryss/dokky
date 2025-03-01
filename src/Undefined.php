@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dokky\OpenApi;
+namespace Dokky;
 
 enum Undefined: string
 {

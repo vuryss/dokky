@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 use Dokky\OpenApi\Schema;
 use Dokky\OpenApi\Schema\Type;
-use Dokky\Tests\Datasets\Classes\Basic;
 
 dataset('class-schemas', [
     [
-        'className' => Basic::class,
+        'className' => Dokky\Tests\Datasets\Classes\Basic::class,
         'expectedSchema' => new Schema(
             type: Type::OBJECT,
             properties: [
@@ -56,5 +55,22 @@ dataset('class-schemas', [
             ],
             required: ['property'],
         ),
-    ]
+    ],
+    [
+        'className' => \Dokky\Tests\Datasets\Classes\Variant1::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(
+                    default: 5,
+                    anyOf: [
+                        new Schema(ref: '#/components/schemas/Basic'),
+                        new Schema(ref: '#/components/schemas/MultiType'),
+                        new Schema(type: Type::INTEGER),
+                        new Schema(type: Type::NULL),
+                    ],
+                ),
+            ],
+        ),
+    ],
 ]);

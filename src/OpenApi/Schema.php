@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dokky\OpenApi;
 
 use Dokky\OpenApi\Schema\Type;
+use Dokky\Undefined;
 
 class Schema implements \JsonSerializable
 {
@@ -32,6 +33,7 @@ class Schema implements \JsonSerializable
         public Undefined|string $contentMediaType = Undefined::VALUE,
         public Undefined|string $contentEncoding = Undefined::VALUE,
         public Undefined|array $anyOf = Undefined::VALUE,
+        public Undefined|string $ref = Undefined::VALUE,
 
         // string type
         public Undefined|int $minLength = Undefined::VALUE,
@@ -74,6 +76,13 @@ class Schema implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return array_filter(get_object_vars($this), static fn ($value) => Undefined::VALUE !== $value);
+        $data = array_filter(get_object_vars($this), static fn ($value) => Undefined::VALUE !== $value);
+
+        if (isset($data['ref'])) {
+            $data['$ref'] = $data['ref'];
+            unset($data['ref']);
+        }
+
+        return $data;
     }
 }

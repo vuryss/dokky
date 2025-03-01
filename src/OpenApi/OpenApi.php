@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
+use Dokky\Undefined;
+
 class OpenApi
 {
     /**

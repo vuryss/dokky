@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dokky;
 
 use Dokky\OpenApi\Schema;
-use Dokky\OpenApi\Undefined;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -16,12 +15,15 @@ use Symfony\Component\PropertyInfo\Type;
 readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
     private PropertyInfoExtractorInterface $propertyInfoExtractor;
+    private SchemaRegistry $schemaRegistry;
 
     public function __construct(
         ?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
+        ?SchemaRegistry $schemaRegistry = null,
     ) {
         // TODO: Use cached extractor
         $this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
+        $this->schemaRegistry = $schemaRegistry ?? new SchemaRegistry();
     }
 
     public function generate(string $className): Schema
@@ -51,7 +53,10 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         }
 
         $schema->properties = $properties;
-        $schema->required = $required;
+
+        if (count($required) > 0) {
+            $schema->required = $required;
+        }
 
         return $schema;
     }
@@ -96,6 +101,13 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
                     $types[] = new Schema(type: Schema\Type::ARRAY);
                     break;
                 case Type::BUILTIN_TYPE_OBJECT:
+                    if (null !== $foundType->getClassName()) {
+                        /** @var class-string $className */
+                        $className = $foundType->getClassName();
+                        $types[] = new Schema(ref: $this->schemaRegistry->getReference($className));
+                        break;
+                    }
+
                     $types[] = new Schema(type: Schema\Type::OBJECT);
                     break;
                 case Type::BUILTIN_TYPE_NULL:
