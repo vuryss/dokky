@@ -7,13 +7,18 @@
     "autoload-dev": {
         "psr-4": {
             "Dokky\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/helper-functions.php"
+        ]
     },
     "require-dev": {
         "pestphp/pest": "^3.7",
         "justinrainbow/json-schema": "^6.1",
         "symfony/serializer": "^7.2",
-        "vuryss/serializer": "^1.9"
+        "vuryss/serializer": "^1.9",
+        "symfony/var-dumper": "^7.2",
+        "phpstan/phpstan": "^2.1"
     },
     "config": {
         "allow-plugins": {

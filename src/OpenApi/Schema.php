@@ -14,6 +14,9 @@ class Schema implements \JsonSerializable
      * @param array<string, Schema>|Undefined $patternProperties
      * @param array<string>|Undefined $required
      * @param array<Schema>|Undefined $prefixItems
+     * @param array<Schema>|Undefined $anyOf
+     * @param array<scalar>|Undefined $enum
+     * @param array<string>|Undefined $examples
      */
     public function __construct(
         public Undefined|Type|array $type = Undefined::VALUE,
@@ -28,6 +31,7 @@ class Schema implements \JsonSerializable
         public mixed $const = Undefined::VALUE,
         public Undefined|string $contentMediaType = Undefined::VALUE,
         public Undefined|string $contentEncoding = Undefined::VALUE,
+        public Undefined|array $anyOf = Undefined::VALUE,
 
         // string type
         public Undefined|int $minLength = Undefined::VALUE,
@@ -65,6 +69,9 @@ class Schema implements \JsonSerializable
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return array_filter(get_object_vars($this), static fn ($value) => Undefined::VALUE !== $value);

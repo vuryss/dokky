@@ -13,4 +13,10 @@ class Basic
     public ?string $stringWithDefaultValue = 'some default value';
 
     public float $floatProperty;
+
+    public null $nullProperty;
+
+    public false $falseProperty;
+
+    public true $trueProperty;
 }

@@ -11,6 +11,7 @@ use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
+use Symfony\Component\PropertyInfo\Type;
 
 readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
@@ -32,60 +33,73 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $required = [];
         $propertyNames = $this->propertyInfoExtractor->getProperties($className);
 
-        foreach ($propertyNames as $propertyName) {
-            $schema->properties[$propertyName] = $this->generatePropertySchema($className, $propertyName);
+        if (null === $propertyNames) {
+            throw new \RuntimeException(
+                sprintf('No properties found for class "%s"', $className)
+            );
+        }
 
-            if (Undefined::VALUE === $schema->properties[$propertyName]->default) {
+        $properties = [];
+
+        foreach ($propertyNames as $propertyName) {
+            $propertySchema = $this->generatePropertySchema($className, $propertyName);
+            $properties[$propertyName] = $propertySchema;
+
+            if (Undefined::VALUE === $propertySchema->default) {
                 $required[] = $propertyName;
             }
         }
 
+        $schema->properties = $properties;
         $schema->required = $required;
 
         return $schema;
     }
 
-    private function generatePropertySchema(string $className, mixed $propertyName): Schema
+    private function generatePropertySchema(string $className, string $propertyName): Schema
     {
         $foundTypes = $this->propertyInfoExtractor->getTypes($className, $propertyName);
         $reflectionProperty = new \ReflectionProperty($className, $propertyName);
         $isNullable = false;
-        $property = new Schema(
-            type: [],
-        );
+        $property = new Schema();
+        $types = [];
 
-        if ($reflectionProperty->hasDefaultValue()) {
-            $property->default = $reflectionProperty->getDefaultValue();
-        }
-
-        if (count($foundTypes) > 1) {
-            throw new \RuntimeException(sprintf('Multiple types found for property "%s" of class "%s"', $propertyName, $className));
+        if (null === $foundTypes) {
+            $isNullable = $this->isPropertyAllowedOnlyNull($reflectionProperty);
+            $foundTypes = [];
         }
 
         foreach ($foundTypes as $foundType) {
-            if ($foundType->isNullable() && !in_array('null', $property->type, true)) {
-                $isNullable = true;
-            }
+            $isNullable = $isNullable || $foundType->isNullable();
 
             switch ($foundType->getBuiltinType()) {
-                case 'int':
-                    $property->type[] = Schema\Type::INTEGER;
+                case Type::BUILTIN_TYPE_INT:
+                    $types[] = new Schema(type: Schema\Type::INTEGER);
                     break;
-                case 'float':
-                    $property->type[] = Schema\Type::NUMBER;
-                    $property->format = 'float';
+                case Type::BUILTIN_TYPE_FLOAT:
+                    $types[] = new Schema(type: Schema\Type::NUMBER, format: 'float');
                     break;
-                case 'string':
-                    $property->type[] = Schema\Type::STRING;
+                case Type::BUILTIN_TYPE_STRING:
+                    $types[] = new Schema(type: Schema\Type::STRING);
                     break;
-                case 'bool':
-                    $property->type[] = Schema\Type::BOOLEAN;
+                case Type::BUILTIN_TYPE_BOOL:
+                    $types[] = new Schema(type: Schema\Type::BOOLEAN);
                     break;
-                case 'array':
-                    $property->type[] = Schema\Type::ARRAY;
+                case Type::BUILTIN_TYPE_TRUE:
+                    $types[] = new Schema(type: Schema\Type::BOOLEAN, enum: [true]);
                     break;
-                case 'object':
-                    $property->type[] = Schema\Type::OBJECT;
+                case Type::BUILTIN_TYPE_FALSE:
+                    $types[] = new Schema(type: Schema\Type::BOOLEAN, enum: [false]);
+                    break;
+                case Type::BUILTIN_TYPE_ARRAY:
+                case Type::BUILTIN_TYPE_ITERABLE:
+                    $types[] = new Schema(type: Schema\Type::ARRAY);
+                    break;
+                case Type::BUILTIN_TYPE_OBJECT:
+                    $types[] = new Schema(type: Schema\Type::OBJECT);
+                    break;
+                case Type::BUILTIN_TYPE_NULL:
+                    $isNullable = true;
                     break;
                 default:
                     throw new \RuntimeException(sprintf('Unsupported type "%s"', $foundType->getBuiltinType()));
@@ -93,11 +107,19 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         }
 
         if ($isNullable) {
-            $property->type[] = Schema\Type::NULL;
+            $types[] = new Schema(type: Schema\Type::NULL);
         }
 
-        if (1 === count($property->type)) {
-            $property->type = $property->type[0];
+        match (count($types)) {
+            0 => throw new \RuntimeException(
+                sprintf('No type found for property "%s" in class "%s"', $propertyName, $className)
+            ),
+            1 => $property = $types[0],
+            default => $property->anyOf = $types,
+        };
+
+        if ($reflectionProperty->hasDefaultValue()) {
+            $property->default = $reflectionProperty->getDefaultValue();
         }
 
         return $property;
@@ -116,5 +138,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             accessExtractors: [$reflectionExtractor],
             initializableExtractors: [$reflectionExtractor],
         );
+    }
+
+    private function isPropertyAllowedOnlyNull(\ReflectionProperty $reflectionProperty): bool
+    {
+        $type = $reflectionProperty->getType();
+
+        return $type instanceof \ReflectionNamedType && 'null' === $type->getName();
     }
 }
