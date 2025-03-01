@@ -42,12 +42,6 @@ expect()->extend('toBeValidJsonSchema', function () {
     return $this;
 });
 
-expect()->extend('convertToObjectWithoutNulls', function (): \Pest\Expectation {
-    $this->value = \Dokky\Tests\Helpers\Serializer::objectWithoutNulls($this->value);
-
-    return $this->and($this->value);
-});
-
 /*
 |--------------------------------------------------------------------------
 | Functions
@@ -59,7 +53,24 @@ expect()->extend('convertToObjectWithoutNulls', function (): \Pest\Expectation {
 |
 */
 
-function something()
-{
-    // ..
+function cleanObject(object $object): object {
+    try {
+        $json = new \Vuryss\Serializer\Serializer()
+            ->serialize(
+                $object,
+                [\Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true]
+            );
+    } catch (\Vuryss\Serializer\SerializerException $e) {
+        throw new RuntimeException('Failed to serialize object', 0, $e);
+    }
+
+    try {
+        return (object)json_decode(
+            $json,
+            associative: false,
+            flags: JSON_THROW_ON_ERROR
+        );
+    } catch (JsonException $e) {
+        throw new RuntimeException('Failed to decode JSON', 0, $e);
+    }
 }

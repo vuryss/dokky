@@ -1,10 +1,10 @@
 <?php
 
 test('Schema generator', function (string $className, \Dokky\OpenApi\Schema $expectedSchema) {
-    $expectedSchema = json_decode(json_encode($expectedSchema));
+    $schema = cleanObject(new \Dokky\ClassSchemaGenerator()->generate($className));
+    $expectedSchema = cleanObject($expectedSchema);
 
-    expect(new \Dokky\ClassSchemaGenerator()->generate($className))
-        ->convertToObjectWithoutNulls()
+    expect($schema)
         ->toBeValidJsonSchema()
         ->toEqual($expectedSchema);
 })->with('class-schemas');

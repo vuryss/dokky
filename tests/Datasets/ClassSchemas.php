@@ -41,4 +41,20 @@ dataset('class-schemas', [
             ],
         ),
     ],
+    [
+        'className' => \Dokky\Tests\Datasets\Classes\MultiType::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(
+                    anyOf: [
+                        new Schema(type: Type::STRING),
+                        new Schema(type: Type::INTEGER),
+                        new Schema(type: Type::NULL),
+                    ]
+                ),
+            ],
+            required: ['property'],
+        ),
+    ]
 ]);
