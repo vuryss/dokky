@@ -8,7 +8,7 @@ class MediaType
 {
     /**
      * @param array<Example|Reference>|null $examples
-     * @param array<Encoding>|null $encoding
+     * @param array<Encoding>|null          $encoding
      */
     public function __construct(
         public ?Schema $schema = null,

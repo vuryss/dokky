@@ -10,14 +10,14 @@ use Dokky\Undefined;
 class Schema implements \JsonSerializable
 {
     /**
-     * @param Type|array<Type>|Undefined $type
+     * @param Type|array<Type>|Undefined      $type
      * @param array<string, Schema>|Undefined $properties
      * @param array<string, Schema>|Undefined $patternProperties
-     * @param array<string>|Undefined $required
-     * @param array<Schema>|Undefined $prefixItems
-     * @param array<Schema>|Undefined $anyOf
-     * @param array<scalar>|Undefined $enum
-     * @param array<string>|Undefined $examples
+     * @param array<string>|Undefined         $required
+     * @param array<Schema>|Undefined         $prefixItems
+     * @param array<Schema>|Undefined         $anyOf
+     * @param array<scalar>|Undefined         $enum
+     * @param array<string>|Undefined         $examples
      */
     public function __construct(
         public Undefined|Type|array $type = Undefined::VALUE,

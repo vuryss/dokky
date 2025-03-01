@@ -6,5 +6,5 @@ namespace Dokky\Tests\Datasets\Classes;
 
 class MultiType
 {
-    public null|int|string $property;
+    public int|string|null $property;
 }

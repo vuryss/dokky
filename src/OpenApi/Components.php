@@ -7,16 +7,16 @@ namespace Dokky\OpenApi;
 class Components
 {
     /**
-     * @param array<string, Schema>|null $schemas
-     * @param array<string, Response|Reference>|null $responses
-     * @param array<string, Parameter|Reference>|null $parameters
-     * @param array<string, Example|Reference>|null $examples
-     * @param array<string, RequestBody|Reference>|null $requestBodies
-     * @param array<string, Header|Reference>|null $headers
-     * @param array<string, SecurityScheme|Reference>|null $securitySchemes
-     * @param array<string, Link|Reference>|null $links
+     * @param array<string, Schema>|null                                      $schemas
+     * @param array<string, Response|Reference>|null                          $responses
+     * @param array<string, Parameter|Reference>|null                         $parameters
+     * @param array<string, Example|Reference>|null                           $examples
+     * @param array<string, RequestBody|Reference>|null                       $requestBodies
+     * @param array<string, Header|Reference>|null                            $headers
+     * @param array<string, SecurityScheme|Reference>|null                    $securitySchemes
+     * @param array<string, Link|Reference>|null                              $links
      * @param array<string, array<string, PathItem|Reference>|Reference>|null $callbacks
-     * @param array<string, PathItem|Reference>|null $pathItems
+     * @param array<string, PathItem|Reference>|null                          $pathItems
      */
     public function __construct(
         private ?array $schemas = null,

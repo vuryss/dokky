@@ -8,7 +8,7 @@ class Header
 {
     /**
      * @param array<string, Example|Reference>|null $examples
-     * @param array<string, MediaType>|null $content
+     * @param array<string, MediaType>|null         $content
      */
     public function __construct(
         private ?string $description = null,

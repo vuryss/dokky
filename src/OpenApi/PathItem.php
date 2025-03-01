@@ -7,7 +7,7 @@ namespace Dokky\OpenApi;
 class PathItem
 {
     /**
-     * @param array<Server> $servers
+     * @param array<Server>              $servers
      * @param array<Parameter|Reference> $parameters
      */
     public function __construct(

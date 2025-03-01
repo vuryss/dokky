@@ -9,10 +9,10 @@ use Dokky\Undefined;
 class OpenApi
 {
     /**
-     * @param array<Server> $servers
-     * @param array<string, PathItem> $paths
-     * @param array<string, PathItem> $webhooks
-     * @param Undefined|Tag[] $tags
+     * @param array<Server>                   $servers
+     * @param array<string, PathItem>         $paths
+     * @param array<string, PathItem>         $webhooks
+     * @param Undefined|Tag[]                 $tags
      * @param Undefined|SecurityRequirement[] $security
      */
     public function __construct(

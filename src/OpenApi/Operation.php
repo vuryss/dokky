@@ -7,11 +7,11 @@ namespace Dokky\OpenApi;
 class Operation
 {
     /**
-     * @param array<string> $tags
-     * @param array<Parameter|Reference> $parameters
+     * @param array<string>                                                   $tags
+     * @param array<Parameter|Reference>                                      $parameters
      * @param array<string, array<string, PathItem|Reference>|Reference>|null $callbacks
-     * @param array<SecurityRequirement> $security
-     * @param array<Server> $servers
+     * @param array<SecurityRequirement>                                      $security
+     * @param array<Server>                                                   $servers
      */
     public function __construct(
         public array $tags = [],

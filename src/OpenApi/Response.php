@@ -8,8 +8,8 @@ class Response
 {
     /**
      * @param array<string, Header|Reference> $headers
-     * @param array<string, MediaType> $content
-     * @param array<string, Link|Reference> $links
+     * @param array<string, MediaType>        $content
+     * @param array<string, Link|Reference>   $links
      */
     public function __construct(
         public string $description,

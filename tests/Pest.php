@@ -28,7 +28,7 @@ expect()->extend('toBeValidJsonSchema', function () {
     $validator = new JsonSchema\Validator();
     $validator->validate(
         $this->value,
-        (object) ['$ref' => 'file://' . __DIR__ . '/schemas/json-schema/schema.json']
+        (object) ['$ref' => 'file://'.__DIR__.'/schemas/json-schema/schema.json']
     );
 
     $errorMessages = [];
@@ -53,19 +53,20 @@ expect()->extend('toBeValidJsonSchema', function () {
 |
 */
 
-function cleanObject(object $object): object {
+function cleanObject(object $object): object
+{
     try {
-        $json = new \Vuryss\Serializer\Serializer()
+        $json = new Vuryss\Serializer\Serializer()
             ->serialize(
                 $object,
-                [\Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true]
+                [Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true]
             );
-    } catch (\Vuryss\Serializer\SerializerException $e) {
+    } catch (Vuryss\Serializer\SerializerException $e) {
         throw new RuntimeException('Failed to serialize object', 0, $e);
     }
 
     try {
-        return (object)json_decode(
+        return (object) json_decode(
             $json,
             associative: false,
             flags: JSON_THROW_ON_ERROR

@@ -6,5 +6,5 @@ namespace Dokky\Tests\Datasets\Classes;
 
 class Variant1
 {
-    public null|Basic|MultiType|int $property = 5;
+    public Basic|MultiType|int|null $property = 5;
 }

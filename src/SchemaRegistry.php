@@ -27,21 +27,20 @@ class SchemaRegistry
             try {
                 $shortClassName = new \ReflectionClass($className)->getShortName();
             } catch (\ReflectionException $e) {
-                throw new \RuntimeException('Class ' . $className . ' does not exist', previous: $e);
+                throw new \RuntimeException('Class '.$className.' does not exist', previous: $e);
             }
 
-            $ref = '#/components/schemas/' . $shortClassName;
+            $ref = '#/components/schemas/'.$shortClassName;
 
             if (isset($this->existingSchemas[$ref])) {
                 $suffix = 2;
 
-                while (isset($this->existingSchemas[$ref . $suffix])) {
-                    $suffix++;
+                while (isset($this->existingSchemas[$ref.$suffix])) {
+                    ++$suffix;
                 }
 
                 $ref .= $suffix;
             }
-
 
             $this->classNameGroupReference[$className][Undefined::VALUE->value] = $ref;
             $this->existingSchemas[$ref] = true;

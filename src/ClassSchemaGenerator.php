@@ -36,9 +36,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $propertyNames = $this->propertyInfoExtractor->getProperties($className);
 
         if (null === $propertyNames) {
-            throw new \RuntimeException(
-                sprintf('No properties found for class "%s"', $className)
-            );
+            throw new \RuntimeException(sprintf('No properties found for class "%s"', $className));
         }
 
         $properties = [];

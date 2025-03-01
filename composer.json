@@ -7,22 +7,24 @@
     "autoload-dev": {
         "psr-4": {
             "Dokky\\Tests\\": "tests/"
-        },
-        "files": [
-            "tests/helper-functions.php"
-        ]
+        }
     },
     "require-dev": {
         "pestphp/pest": "^3.7",
-        "justinrainbow/json-schema": "^6.1",
+        "justinrainbow/json-schema": "^5.3",
         "symfony/serializer": "^7.2",
         "vuryss/serializer": "^1.9",
         "symfony/var-dumper": "^7.2",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "captainhook/captainhook": "^5.25",
+        "friendsofphp/php-cs-fixer": "^3.70",
+        "captainhook/hook-installer": "^1.0",
+        "ramsey/conventional-commits": "1.5.1"
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "captainhook/hook-installer": true
         }
     },
     "require": {

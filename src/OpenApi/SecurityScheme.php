@@ -6,5 +6,4 @@ namespace Dokky\OpenApi;
 
 class SecurityScheme
 {
-
 }

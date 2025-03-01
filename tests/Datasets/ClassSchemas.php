@@ -41,7 +41,7 @@ dataset('class-schemas', [
         ),
     ],
     [
-        'className' => \Dokky\Tests\Datasets\Classes\MultiType::class,
+        'className' => Dokky\Tests\Datasets\Classes\MultiType::class,
         'expectedSchema' => new Schema(
             type: Type::OBJECT,
             properties: [
@@ -57,7 +57,7 @@ dataset('class-schemas', [
         ),
     ],
     [
-        'className' => \Dokky\Tests\Datasets\Classes\Variant1::class,
+        'className' => Dokky\Tests\Datasets\Classes\Variant1::class,
         'expectedSchema' => new Schema(
             type: Type::OBJECT,
             properties: [
