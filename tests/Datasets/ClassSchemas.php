@@ -283,4 +283,16 @@ dataset('class-schemas', [
             ],
         ),
     ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithIgnore::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property3' => new Schema(type: Type::STRING),
+                'property6' => new Schema(type: Type::STRING),
+            ],
+            required: ['property3', 'property6'],
+        ),
+    ],
 ]);

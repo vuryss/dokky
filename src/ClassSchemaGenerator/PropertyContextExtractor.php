@@ -6,7 +6,6 @@ namespace Dokky\ClassSchemaGenerator;
 
 use Dokky\Attribute\Groups;
 use Dokky\DokkyException;
-use Dokky\Undefined;
 
 readonly class PropertyContextExtractor
 {
@@ -14,13 +13,14 @@ readonly class PropertyContextExtractor
     {
         return new PropertyContext(
             groups: $this->extractGroups($property),
+            ignored: $this->extractIgnored($property),
         );
     }
 
     /**
-     * @return array<string>|Undefined
+     * @return array<string>
      */
-    private function extractGroups(\ReflectionProperty $property): array|Undefined
+    private function extractGroups(\ReflectionProperty $property): array
     {
         // First priority - our attribute
         $groupsAttribute = $property->getAttributes(Groups::class);
@@ -36,7 +36,7 @@ readonly class PropertyContextExtractor
         }
 
         if (1 === $attributeCount) {
-            return Util::formatGroups($groupsAttribute[0]->newInstance()->names);
+            return Util::formatGroups($groupsAttribute[0]->newInstance()->groups);
         }
 
         // Second priority - Symfony serializer attribute, if available
@@ -59,6 +59,28 @@ readonly class PropertyContextExtractor
         }
 
         // Nothing found
-        return Undefined::VALUE;
+        return [];
+    }
+
+    private function extractIgnored(\ReflectionProperty $property): bool
+    {
+        // First priority - our attribute
+        $ignoreAttribute = $property->getAttributes(\Dokky\Attribute\Ignore::class);
+
+        if (count($ignoreAttribute) > 0) {
+            return true;
+        }
+
+        // Second priority - Symfony serializer attribute, if available
+        if (class_exists(\Symfony\Component\Serializer\Attribute\Ignore::class)) {
+            $symfonyIgnoreAttribute = $property->getAttributes(\Symfony\Component\Serializer\Attribute\Ignore::class);
+
+            if (count($symfonyIgnoreAttribute) > 0) {
+                return true;
+            }
+        }
+
+        // Nothing found
+        return false;
     }
 }

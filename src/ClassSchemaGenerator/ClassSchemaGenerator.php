@@ -58,14 +58,19 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             $reflectionProperty = new \ReflectionProperty($className, $propertyName);
             $propertyContext = $this->propertyContextExtractor->extract($reflectionProperty);
 
+            // Groups filtering
             if (
                 null !== $groups
                 && (
-                    Undefined::VALUE === $propertyContext->groups
-                    || [] === $propertyContext->groups
+                    [] === $propertyContext->groups
                     || 0 === count(array_intersect($propertyContext->groups, $groups))
                 )
             ) {
+                continue;
+            }
+
+            // Ignored properties
+            if ($propertyContext->ignored) {
                 continue;
             }
 
