@@ -74,11 +74,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
                 continue;
             }
 
+            $finalName = $propertyContext->name ?? $propertyName;
             $propertySchema = $this->generatePropertySchema($className, $propertyName, $reflectionProperty);
-            $properties[$propertyName] = $propertySchema;
+            $properties[$finalName] = $propertySchema;
 
             if (Undefined::VALUE === $propertySchema->default) {
-                $required[] = $propertyName;
+                $required[] = $finalName;
             }
         }
 

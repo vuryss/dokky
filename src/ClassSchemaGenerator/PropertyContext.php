@@ -12,6 +12,7 @@ readonly class PropertyContext
     public function __construct(
         public array $groups = [],
         public bool $ignored = false,
+        public ?string $name = null,
     ) {
     }
 }

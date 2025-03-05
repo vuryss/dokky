@@ -14,6 +14,7 @@ readonly class PropertyContextExtractor
         return new PropertyContext(
             groups: $this->extractGroups($property),
             ignored: $this->extractIgnored($property),
+            name: $this->extractName($property),
         );
     }
 
@@ -82,5 +83,29 @@ readonly class PropertyContextExtractor
 
         // Nothing found
         return false;
+    }
+
+    private function extractName(\ReflectionProperty $property): ?string
+    {
+        // First priority - our attribute
+        $serializedNameAttribute = $property->getAttributes(\Dokky\Attribute\SerializedName::class);
+
+        if (count($serializedNameAttribute) > 0) {
+            return $serializedNameAttribute[0]->newInstance()->serializedName;
+        }
+
+        // Second priority - Symfony serializer attribute, if available
+        if (class_exists(\Symfony\Component\Serializer\Attribute\SerializedName::class)) {
+            $symfonySerializedNameAttribute = $property->getAttributes(
+                \Symfony\Component\Serializer\Attribute\SerializedName::class
+            );
+
+            if (count($symfonySerializedNameAttribute) > 0) {
+                return $symfonySerializedNameAttribute[0]->newInstance()->getSerializedName();
+            }
+        }
+
+        // Nothing found
+        return null;
     }
 }

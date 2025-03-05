@@ -295,4 +295,27 @@ dataset('class-schemas', [
             required: ['property3', 'property6'],
         ),
     ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithSerializedName::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property_1' => new Schema(type: Type::STRING),
+                'property_2' => new Schema(type: Type::STRING),
+                'property3' => new Schema(type: Type::STRING),
+                'property_4' => new Schema(type: Type::STRING),
+                'property_5' => new Schema(type: Type::STRING),
+                'property6' => new Schema(type: Type::STRING),
+            ],
+            required: [
+                'property_1',
+                'property_2',
+                'property3',
+                'property_4',
+                'property_5',
+                'property6',
+            ],
+        ),
+    ],
 ]);
