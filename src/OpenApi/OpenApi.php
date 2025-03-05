@@ -6,8 +6,10 @@ namespace Dokky\OpenApi;
 
 use Dokky\Undefined;
 
-class OpenApi
+class OpenApi implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
      * @param array<Server>                   $servers
      * @param array<string, PathItem>         $paths
@@ -18,7 +20,7 @@ class OpenApi
     public function __construct(
         public string $openapi,
         public Info $info,
-        public ?string $jsonSchemaDialect = null,
+        public Undefined|string $jsonSchemaDialect = Undefined::VALUE,
         public Undefined|array $servers = Undefined::VALUE,
         public Undefined|array $paths = Undefined::VALUE,
         public Undefined|array $webhooks = Undefined::VALUE,

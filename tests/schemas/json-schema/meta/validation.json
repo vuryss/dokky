@@ -20,7 +20,7 @@
         "const": true,
         "enum": {
             "type": "array",
-            "items": true
+            "items": {}
         },
         "multipleOf": {
             "type": "number",

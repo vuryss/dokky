@@ -9,15 +9,17 @@ use Dokky\Undefined;
 
 class Schema implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
-     * @param Type|array<Type>|Undefined      $type
-     * @param array<string, Schema>|Undefined $properties
-     * @param array<string, Schema>|Undefined $patternProperties
-     * @param array<string>|Undefined         $required
-     * @param array<Schema>|Undefined         $prefixItems
-     * @param array<Schema>|Undefined         $anyOf
-     * @param array<scalar>|Undefined         $enum
-     * @param array<string>|Undefined         $examples
+     * @param Type|array<Type>      $type
+     * @param array<string, Schema> $properties
+     * @param array<string, Schema> $patternProperties
+     * @param array<string>         $required
+     * @param array<Schema>         $prefixItems
+     * @param array<Schema>         $anyOf
+     * @param array<scalar>         $enum
+     * @param array<string>         $examples
      */
     public function __construct(
         public Undefined|Type|array $type = Undefined::VALUE,
@@ -69,20 +71,5 @@ class Schema implements \JsonSerializable
         public Undefined|int $maxItems = Undefined::VALUE,
         public Undefined|bool $uniqueItems = Undefined::VALUE,
     ) {
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function jsonSerialize(): array
-    {
-        $data = array_filter(get_object_vars($this), static fn ($value) => Undefined::VALUE !== $value);
-
-        if (isset($data['ref'])) {
-            $data['$ref'] = $data['ref'];
-            unset($data['ref']);
-        }
-
-        return $data;
     }
 }

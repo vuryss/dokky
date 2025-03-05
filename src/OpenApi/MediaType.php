@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class MediaType
+use Dokky\Undefined;
+
+class MediaType implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
-     * @param array<Example|Reference>|null $examples
-     * @param array<Encoding>|null          $encoding
+     * @param array<Example|Reference> $examples
+     * @param array<Encoding>          $encoding
      */
     public function __construct(
-        public ?Schema $schema = null,
-        public mixed $example = null,
-        public ?array $examples = null,
-        public ?array $encoding = null,
+        public Undefined|Schema $schema = Undefined::VALUE,
+        public mixed $example = Undefined::VALUE,
+        public Undefined|array $examples = Undefined::VALUE,
+        public Undefined|array $encoding = Undefined::VALUE,
     ) {
     }
 }

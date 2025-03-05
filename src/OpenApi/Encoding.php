@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class Encoding
+use Dokky\Undefined;
+
+class Encoding implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
-     * @param array<Header|Reference>|null $headers
+     * @param array<Header|Reference> $headers
      */
     public function __construct(
-        public ?string $contentType = null,
-        public ?array $headers = null,
-        public ?string $style = null,
-        public ?bool $explode = null,
-        public bool $allowReserved = false,
+        public Undefined|string $contentType = Undefined::VALUE,
+        public Undefined|array $headers = Undefined::VALUE,
+        public Undefined|string $style = Undefined::VALUE,
+        public Undefined|bool $explode = Undefined::VALUE,
+        public Undefined|bool $allowReserved = Undefined::VALUE,
     ) {
     }
 }

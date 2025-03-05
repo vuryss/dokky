@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class Link
+use Dokky\Undefined;
+
+class Link implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
-     * @param array<string, mixed>|null $parameters
+     * @param array<string, mixed> $parameters
      */
     public function __construct(
-        public ?string $operationRef = null,
-        public ?string $operationId = null,
-        public ?array $parameters = null,
-        public mixed $requestBody = null,
-        public ?string $description = null,
-        public ?Server $server = null,
+        public Undefined|string $operationRef = Undefined::VALUE,
+        public Undefined|string $operationId = Undefined::VALUE,
+        public Undefined|array $parameters = Undefined::VALUE,
+        public mixed $requestBody = Undefined::VALUE,
+        public Undefined|string $description = Undefined::VALUE,
+        public Undefined|Server $server = Undefined::VALUE,
     ) {
     }
 }

@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class Response
+use Dokky\Undefined;
+
+class Response implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     /**
      * @param array<string, Header|Reference> $headers
      * @param array<string, MediaType>        $content
@@ -13,9 +17,9 @@ class Response
      */
     public function __construct(
         public string $description,
-        public array $headers = [],
-        public array $content = [],
-        public array $links = [],
+        public Undefined|array $headers = Undefined::VALUE,
+        public Undefined|array $content = Undefined::VALUE,
+        public Undefined|array $links = Undefined::VALUE,
     ) {
     }
 }

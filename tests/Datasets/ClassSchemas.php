@@ -73,4 +73,77 @@ dataset('class-schemas', [
             ],
         ),
     ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDateTime::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(type: Type::STRING, format: 'date-time'),
+                'property2' => new Schema(type: Type::STRING, format: 'date-time'),
+            ],
+            required: ['property', 'property2'],
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithArrays::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'arrayOfScalar' => new Schema(type: Type::ARRAY, items: new Schema(type: Type::STRING)),
+                'arrayOfObjects' => new Schema(
+                    type: Type::ARRAY,
+                    items: new Schema(
+                        anyOf: [
+                            new Schema(ref: '#/components/schemas/MultiType'),
+                            new Schema(ref: '#/components/schemas/Basic'),
+                        ]
+                    )
+                ),
+                'arrayOfMultipleMixedTypes' => new Schema(
+                    type: Type::ARRAY,
+                    items: new Schema(
+                        anyOf: [
+                            new Schema(ref: '#/components/schemas/Basic'),
+                            new Schema(ref: '#/components/schemas/MultiType'),
+                            new Schema(type: Type::INTEGER),
+                        ]
+                    )
+                ),
+            ],
+            required: ['arrayOfScalar', 'arrayOfObjects', 'arrayOfMultipleMixedTypes'],
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\Variant2::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(
+                    default: null,
+                    anyOf: [
+                        new Schema(type: Type::STRING),
+                        new Schema(type: Type::NULL),
+                    ],
+                ),
+            ],
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithEnums::class,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(ref: '#/components/schemas/SomeStringBackedEnum'),
+                'property2' => new Schema(ref: '#/components/schemas/SomeIntBackedEnum'),
+            ],
+            required: ['property', 'property2'],
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\SomeStringBackedEnum::class,
+        'expectedSchema' => new Schema(
+            type: Type::STRING,
+            enum: ['A', 'B', 'C'],
+        ),
+    ],
 ]);

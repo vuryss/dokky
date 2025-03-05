@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class Tag
+use Dokky\Undefined;
+
+class Tag implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     public function __construct(
         public string $name,
-        public ?string $description = null,
-        public ?ExternalDocumentation $externalDocs = null,
+        public Undefined|string $description = Undefined::VALUE,
+        public Undefined|ExternalDocumentation $externalDocs = Undefined::VALUE,
     ) {
     }
 }

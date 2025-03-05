@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Dokky\OpenApi;
 
-class Reference
+use Dokky\Undefined;
+
+class Reference implements \JsonSerializable
 {
+    use JsonSerializableTrait;
+
     public function __construct(
         public string $ref,
-        public ?string $summary = null,
-        public ?string $description = null,
+        public Undefined|string $summary = Undefined::VALUE,
+        public Undefined|string $description = Undefined::VALUE,
     ) {
     }
 }
