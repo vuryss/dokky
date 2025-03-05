@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Dokky;
+namespace Dokky\ClassSchemaGenerator;
 
+use Dokky\ComponentsRegistry;
 use Dokky\OpenApi\Schema;
+use Dokky\Undefined;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -16,20 +18,27 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
     private PropertyInfoExtractorInterface $propertyInfoExtractor;
     private ComponentsRegistry $componentsRegistry;
+    private PropertyContextExtractor $propertyContextExtractor;
 
     public function __construct(
         ?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
         ?ComponentsRegistry $componentsRegistry = null,
+        ?PropertyContextExtractor $propertyContextExtractor = null,
     ) {
-        // TODO: Use cached extractor
+        // TODO: Use cached extractors
         $this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
         $this->componentsRegistry = $componentsRegistry ?? new ComponentsRegistry();
+        $this->propertyContextExtractor = $propertyContextExtractor ?? new PropertyContextExtractor();
     }
 
-    public function generate(string $className): Schema
+    public function generate(string $className, ?array $groups = null): Schema
     {
         if (enum_exists($className)) {
             return $this->getEnumSchema($className);
+        }
+
+        if (null !== $groups) {
+            $groups = array_unique([...Util::formatGroups($groups), 'default']);
         }
 
         $schema = new Schema(
@@ -46,7 +55,21 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $properties = [];
 
         foreach ($propertyNames as $propertyName) {
-            $propertySchema = $this->generatePropertySchema($className, $propertyName);
+            $reflectionProperty = new \ReflectionProperty($className, $propertyName);
+            $propertyContext = $this->propertyContextExtractor->extract($reflectionProperty);
+
+            if (
+                null !== $groups
+                && (
+                    Undefined::VALUE === $propertyContext->groups
+                    || [] === $propertyContext->groups
+                    || 0 === count(array_intersect($propertyContext->groups, $groups))
+                )
+            ) {
+                continue;
+            }
+
+            $propertySchema = $this->generatePropertySchema($className, $propertyName, $reflectionProperty);
             $properties[$propertyName] = $propertySchema;
 
             if (Undefined::VALUE === $propertySchema->default) {
@@ -63,10 +86,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         return $schema;
     }
 
-    private function generatePropertySchema(string $className, string $propertyName): Schema
-    {
+    private function generatePropertySchema(
+        string $className,
+        string $propertyName,
+        \ReflectionProperty $reflectionProperty,
+    ): Schema {
         $foundTypes = $this->propertyInfoExtractor->getTypes($className, $propertyName);
-        $reflectionProperty = new \ReflectionProperty($className, $propertyName);
 
         if (null === $foundTypes) {
             if ($this->isPropertyAllowedOnlyNull($reflectionProperty)) {

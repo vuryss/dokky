@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dokky;
 
+use Dokky\ClassSchemaGenerator\ClassSchemaGenerator;
 use Dokky\OpenApi\Components;
 
 readonly class ComponentsGenerator
