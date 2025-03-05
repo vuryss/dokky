@@ -13,5 +13,8 @@ readonly class Groups
     public function __construct(
         public array $names,
     ) {
+        if ([] === $this->names) {
+            throw new \InvalidArgumentException('Groups attribute must have at least one group name.');
+        }
     }
 }
