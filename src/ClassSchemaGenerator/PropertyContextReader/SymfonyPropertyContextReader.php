@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dokky\ClassSchemaGenerator\PropertyContextReader;
 
+use Dokky\Attribute\Constraints;
 use Dokky\ClassSchemaGenerator\PropertyContext;
 use Dokky\ClassSchemaGenerator\PropertyContextReaderInterface;
 use Dokky\ClassSchemaGenerator\Util;
@@ -17,10 +18,20 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
             return new PropertyContext();
         }
 
+        $constraints = $this->getConstraints($property);
+
         return new PropertyContext(
             groups: $this->extractGroups($property),
             ignored: $this->extractIgnored($property),
             name: $this->extractName($property),
+            minLength: $constraints->minLength,
+            maxLength: $constraints->maxLength,
+            minItems: $constraints->minItems,
+            maxItems: $constraints->maxItems,
+            minimum: $constraints->minimum,
+            maximum: $constraints->maximum,
+            exclusiveMinimum: $constraints->exclusiveMinimum,
+            exclusiveMaximum: $constraints->exclusiveMaximum,
         );
     }
 
@@ -66,5 +77,91 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
         }
 
         return null;
+    }
+
+    private function getConstraints(\ReflectionProperty $property): Constraints
+    {
+        $constraintAttributes = $property->getAttributes(
+            \Symfony\Component\Validator\Constraint::class,
+            \ReflectionAttribute::IS_INSTANCEOF,
+        );
+
+        $minLength = null;
+        $maxLength = null;
+        $minItems = null;
+        $maxItems = null;
+        $minimum = null;
+        $exclusiveMinimum = null;
+        $maximum = null;
+        $exclusiveMaximum = null;
+
+        foreach ($constraintAttributes as $attribute) {
+            $attribute = $attribute->newInstance();
+
+            switch ($attribute::class) {
+                case \Symfony\Component\Validator\Constraints\Length::class:
+                    $minLength = $attribute->min;
+                    $maxLength = $attribute->max;
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\Count::class:
+                    $minItems = $attribute->min;
+                    $maxItems = $attribute->max;
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\Range::class:
+                    $minimum = $this->intOrFloat($attribute->min);
+                    $maximum = $this->intOrFloat($attribute->max);
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\LessThan::class:
+                    $maximum = null;
+                    $exclusiveMaximum = $this->intOrFloat($attribute->value);
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\LessThanOrEqual::class:
+                    $maximum = $this->intOrFloat($attribute->value);
+                    $exclusiveMaximum = null;
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\GreaterThan::class:
+                    $minimum = null;
+                    $exclusiveMinimum = $this->intOrFloat($attribute->value);
+                    break;
+
+                case \Symfony\Component\Validator\Constraints\GreaterThanOrEqual::class:
+                    $minimum = $this->intOrFloat($attribute->value);
+                    $exclusiveMinimum = null;
+                    break;
+            }
+        }
+
+        return new Constraints(
+            minLength: $minLength,
+            maxLength: $maxLength,
+            minimum: $minimum,
+            exclusiveMinimum: $exclusiveMinimum,
+            maximum: $maximum,
+            exclusiveMaximum: $exclusiveMaximum,
+            minItems: $minItems,
+            maxItems: $maxItems,
+        );
+    }
+
+    private function intOrFloat(mixed $value): int|float
+    {
+        if (is_int($value) || is_float($value)) {
+            return $value;
+        }
+
+        if (!is_numeric($value)) {
+            throw new \RuntimeException('Expected numeric value, got: '.get_debug_type($value));
+        }
+
+        if (str_contains($value, '.')) {
+            return (float) $value;
+        }
+
+        return (int) $value;
     }
 }

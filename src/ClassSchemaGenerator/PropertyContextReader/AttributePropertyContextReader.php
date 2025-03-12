@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dokky\ClassSchemaGenerator\PropertyContextReader;
 
+use Dokky\Attribute\Constraints;
 use Dokky\Attribute\Groups;
 use Dokky\ClassSchemaGenerator\PropertyContext;
 use Dokky\ClassSchemaGenerator\PropertyContextReaderInterface;
@@ -14,10 +15,20 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
 {
     public function extract(\ReflectionProperty $property): PropertyContext
     {
+        $constraints = $this->getConstraints($property);
+
         return new PropertyContext(
             groups: $this->extractGroups($property),
             ignored: $this->extractIgnored($property),
             name: $this->extractName($property),
+            minLength: $constraints->minLength,
+            maxLength: $constraints->maxLength,
+            minItems: $constraints->minItems,
+            maxItems: $constraints->maxItems,
+            minimum: $constraints->minimum,
+            maximum: $constraints->maximum,
+            exclusiveMinimum: $constraints->exclusiveMinimum,
+            exclusiveMaximum: $constraints->exclusiveMaximum,
         );
     }
 
@@ -59,5 +70,25 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         }
 
         return null;
+    }
+
+    private function getConstraints(\ReflectionProperty $property): Constraints
+    {
+        $attributes = $property->getAttributes(Constraints::class);
+
+        if (count($attributes) > 1) {
+            throw new DokkyException(sprintf(
+                'Property "%s" of class "%s" has multiple "%s" attributes, only one is allowed',
+                $property->getName(),
+                $property->getDeclaringClass()->getName(),
+                Constraints::class,
+            ));
+        }
+
+        if (1 === count($attributes)) {
+            return $attributes[0]->newInstance();
+        }
+
+        return new Constraints();
     }
 }

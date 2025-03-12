@@ -19,7 +19,8 @@
         "captainhook/captainhook": "^5.25",
         "friendsofphp/php-cs-fixer": "^3.70",
         "captainhook/hook-installer": "^1.0",
-        "ramsey/conventional-commits": "1.5.1"
+        "ramsey/conventional-commits": "1.5.1",
+        "symfony/validator": "^7.2"
     },
     "config": {
         "allow-plugins": {

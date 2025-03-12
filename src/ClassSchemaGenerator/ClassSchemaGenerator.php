@@ -85,6 +85,39 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             $propertySchema = $this->generatePropertySchema($className, $propertyName, $reflectionProperty);
             $properties[$finalName] = $propertySchema;
 
+            // Constraints
+            if (null !== $propertyContext->minLength) {
+                $propertySchema->minLength = $propertyContext->minLength;
+            }
+
+            if (null !== $propertyContext->maxLength) {
+                $propertySchema->maxLength = $propertyContext->maxLength;
+            }
+
+            if (null !== $propertyContext->minItems) {
+                $propertySchema->minItems = $propertyContext->minItems;
+            }
+
+            if (null !== $propertyContext->maxItems) {
+                $propertySchema->maxItems = $propertyContext->maxItems;
+            }
+
+            if (null !== $propertyContext->minimum) {
+                $propertySchema->minimum = $propertyContext->minimum;
+            }
+
+            if (null !== $propertyContext->maximum) {
+                $propertySchema->maximum = $propertyContext->maximum;
+            }
+
+            if (null !== $propertyContext->exclusiveMinimum) {
+                $propertySchema->exclusiveMinimum = $propertyContext->exclusiveMinimum;
+            }
+
+            if (null !== $propertyContext->exclusiveMaximum) {
+                $propertySchema->exclusiveMaximum = $propertyContext->exclusiveMaximum;
+            }
+
             if (Undefined::VALUE === $propertySchema->default) {
                 $required[] = $finalName;
             }
