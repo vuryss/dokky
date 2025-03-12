@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dokky\ClassSchemaGenerator;
+namespace Dokky;
 
 use Dokky\OpenApi\Schema;
 

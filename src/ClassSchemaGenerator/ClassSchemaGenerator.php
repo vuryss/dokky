@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Dokky\ClassSchemaGenerator;
 
+use Dokky\ClassSchemaGenerator\PropertyContextReader\AttributePropertyContextReader;
+use Dokky\ClassSchemaGenerator\PropertyContextReader\ChainPropertyContextReader;
+use Dokky\ClassSchemaGenerator\PropertyContextReader\SymfonyPropertyContextReader;
+use Dokky\ClassSchemaGeneratorInterface;
 use Dokky\ComponentsRegistry;
 use Dokky\OpenApi\Schema;
 use Dokky\Undefined;
@@ -18,17 +22,20 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
     private PropertyInfoExtractorInterface $propertyInfoExtractor;
     private ComponentsRegistry $componentsRegistry;
-    private PropertyContextExtractor $propertyContextExtractor;
+    private PropertyContextReaderInterface $propertyContextReader;
 
     public function __construct(
         ?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
         ?ComponentsRegistry $componentsRegistry = null,
-        ?PropertyContextExtractor $propertyContextExtractor = null,
+        ?PropertyContextReaderInterface $propertyContextReader = null,
     ) {
         // TODO: Use cached extractors
         $this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
         $this->componentsRegistry = $componentsRegistry ?? new ComponentsRegistry();
-        $this->propertyContextExtractor = $propertyContextExtractor ?? new PropertyContextExtractor();
+        $this->propertyContextReader = $propertyContextReader ?? new ChainPropertyContextReader([
+            new AttributePropertyContextReader(),
+            new SymfonyPropertyContextReader(),
+        ]);
     }
 
     public function generate(string $className, ?array $groups = null): Schema
@@ -56,7 +63,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 
         foreach ($propertyNames as $propertyName) {
             $reflectionProperty = new \ReflectionProperty($className, $propertyName);
-            $propertyContext = $this->propertyContextExtractor->extract($reflectionProperty);
+            $propertyContext = $this->propertyContextReader->extract($reflectionProperty);
 
             // Groups filtering
             if (
