@@ -81,10 +81,10 @@ class DataWithConstraints
     #[GreaterThan(value: 7)]
     public int $property17;
 
-    #[GreaterThan(value: 7.3)]
+    #[GreaterThan(value: '7.3')]
     public float $property18;
 
-    #[GreaterThanOrEqual(value: 7)]
+    #[GreaterThanOrEqual(value: '7')]
     public int $property19;
 
     #[GreaterThanOrEqual(value: 7.3)]

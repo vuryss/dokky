@@ -15,7 +15,7 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
     public function extract(\ReflectionProperty $property): PropertyContext
     {
         if (!class_exists(\Symfony\Component\Serializer\Attribute\SerializedName::class)) {
-            return new PropertyContext();
+            return new PropertyContext(); // @codeCoverageIgnore
         }
 
         $constraints = $this->getConstraints($property);
@@ -155,7 +155,7 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
         }
 
         if (!is_numeric($value)) {
-            throw new \RuntimeException('Expected numeric value, got: '.get_debug_type($value));
+            throw new DokkyException('Expected numeric value, got: '.get_debug_type($value));
         }
 
         if (str_contains($value, '.')) {
