@@ -1,6 +1,6 @@
 # Dokky
 
-[![codecov](https://codecov.io/gh/vuryss/dokky/graph/badge.svg?token=XXj2PesW0g)](https://codecov.io/gh/vuryss/dokky)
+[![codecov](https://codecov.io/github/vuryss/dokky/branch/master/graph/badge.svg?token=XXj2PesW0g)](https://codecov.io/github/vuryss/dokky)
 
 **UNDER DEVELOPMENT USE AT OWN RISK**
 
