@@ -59,6 +59,7 @@ class Schema implements \JsonSerializable
         public Undefined|int $minProperties = Undefined::VALUE,
         public Undefined|int $maxProperties = Undefined::VALUE,
         public Undefined|self|false $unevaluatedProperties = Undefined::VALUE,
+        public Undefined|Discriminator $discriminator = Undefined::VALUE,
 
         // array type
         public Undefined|false|self $items = Undefined::VALUE,

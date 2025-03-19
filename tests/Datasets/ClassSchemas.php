@@ -451,4 +451,76 @@ dataset('class-schemas', [
             ],
         ),
     ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDiscriminatorMap::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            anyOf: [
+                new Schema(ref: '#/components/schemas/DataWithEnums'),
+                new Schema(ref: '#/components/schemas/Basic'),
+            ],
+            discriminator: new Dokky\OpenApi\Discriminator(
+                propertyName: 'type',
+                mapping: [
+                    'type1' => '#/components/schemas/DataWithEnums',
+                    'type2' => '#/components/schemas/Basic',
+                ],
+            )
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDiscriminatorMap2::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            anyOf: [
+                new Schema(ref: '#/components/schemas/DataWithEnums'),
+                new Schema(ref: '#/components/schemas/Basic'),
+            ],
+            discriminator: new Dokky\OpenApi\Discriminator(
+                propertyName: 'type',
+                mapping: [
+                    'type1' => '#/components/schemas/DataWithEnums',
+                    'type2' => '#/components/schemas/Basic',
+                ],
+            )
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDiscriminatorMap3::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            anyOf: [
+                new Schema(ref: '#/components/schemas/DataWithEnums'),
+                new Schema(ref: '#/components/schemas/Basic'),
+            ],
+            discriminator: new Dokky\OpenApi\Discriminator(
+                propertyName: 'type',
+                mapping: [
+                    'type1' => '#/components/schemas/DataWithEnums',
+                    'type2' => '#/components/schemas/Basic',
+                ],
+            )
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDiscriminatorMap4::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            anyOf: [
+                new Schema(ref: '#/components/schemas/DataWithEnums'),
+                new Schema(ref: '#/components/schemas/Basic'),
+            ],
+            discriminator: new Dokky\OpenApi\Discriminator(
+                propertyName: 'type',
+                mapping: [
+                    'type1' => '#/components/schemas/DataWithEnums',
+                    'type2' => '#/components/schemas/Basic',
+                ],
+            )
+        ),
+    ],
 ]);

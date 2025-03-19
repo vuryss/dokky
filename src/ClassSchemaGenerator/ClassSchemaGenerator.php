@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Dokky\ClassSchemaGenerator;
 
+use Dokky\Attribute\DiscriminatorMap;
 use Dokky\ClassSchemaGenerator\PropertyContextReader\AttributePropertyContextReader;
 use Dokky\ClassSchemaGenerator\PropertyContextReader\ChainPropertyContextReader;
 use Dokky\ClassSchemaGenerator\PropertyContextReader\SymfonyPropertyContextReader;
 use Dokky\ClassSchemaGeneratorInterface;
 use Dokky\ComponentsRegistry;
+use Dokky\DokkyException;
+use Dokky\OpenApi\Discriminator;
 use Dokky\OpenApi\Schema;
 use Dokky\Undefined;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -46,6 +49,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 
         if (null !== $groups) {
             $groups = array_unique([...Util::formatGroups($groups), 'default']);
+        }
+
+        $reflectionClass = new \ReflectionClass($className);
+
+        if ($reflectionClass->isAbstract() || $reflectionClass->isInterface()) {
+            return $this->getInterfaceSchema($groups, $reflectionClass);
         }
 
         $schema = new Schema(
@@ -309,5 +318,65 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             ),
             default => throw new \RuntimeException(sprintf('Unsupported enum "%s"', $className)),
         };
+    }
+
+    /**
+     * @param array<string>|null       $groups
+     * @param \ReflectionClass<object> $reflectionClass
+     */
+    private function getInterfaceSchema(
+        ?array $groups,
+        \ReflectionClass $reflectionClass,
+    ): Schema {
+        $discriminatorMap = $reflectionClass->getAttributes(DiscriminatorMap::class);
+
+        if (1 === count($discriminatorMap)) {
+            $discriminatorMap = $discriminatorMap[0]->newInstance();
+
+            return $this->getDiscriminatorMapSchema(
+                propertyName: $discriminatorMap->typeProperty,
+                mapping: $discriminatorMap->mapping,
+                groups: $groups,
+            );
+        }
+
+        $discriminatorMap = $reflectionClass->getAttributes(\Symfony\Component\Serializer\Attribute\DiscriminatorMap::class);
+
+        if (1 === count($discriminatorMap)) {
+            $discriminatorMap = $discriminatorMap[0]->newInstance();
+
+            return $this->getDiscriminatorMapSchema(
+                propertyName: $discriminatorMap->getTypeProperty(),
+                /* @phpstan-ignore-next-line */
+                mapping: $discriminatorMap->getMapping(),
+                groups: $groups,
+            );
+        }
+
+        throw new DokkyException('Could not resolve DiscriminatorMap attribute for class: '.$reflectionClass->getName());
+    }
+
+    /**
+     * @param array<string, class-string> $mapping
+     * @param array<string>|null          $groups
+     */
+    private function getDiscriminatorMapSchema(string $propertyName, array $mapping, ?array $groups): Schema
+    {
+        return new Schema(
+            type: Schema\Type::OBJECT,
+            anyOf: array_map(
+                fn ($className) => new Schema(
+                    ref: $this->componentsRegistry->getSchemaReference($className, $groups),
+                ),
+                array_values($mapping),
+            ),
+            discriminator: new Discriminator(
+                propertyName: $propertyName,
+                mapping: array_map(
+                    fn ($className) => $this->componentsRegistry->getSchemaReference($className, $groups),
+                    $mapping
+                ),
+            ),
+        );
     }
 }
