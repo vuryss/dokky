@@ -17,11 +17,19 @@ class ComponentsRegistry
     private array $existingSchemas = [];
 
     /**
-     * @param class-string $className
+     * @param class-string  $className
+     * @param array<string> $groups
      */
-    public function getSchemaReference(string $className): string
+    public function getSchemaReference(string $className, ?array $groups = null): string
     {
-        if (!isset($this->schemaNamesByClassNameAndGroup[$className][Undefined::VALUE->value])) {
+        $group = Undefined::VALUE->value;
+
+        if (null !== $groups) {
+            sort($groups);
+            $group = implode(',', $groups);
+        }
+
+        if (!isset($this->schemaNamesByClassNameAndGroup[$className][$group])) {
             try {
                 $shortClassName = new \ReflectionClass($className)->getShortName();
             } catch (\ReflectionException $e) {
@@ -41,11 +49,11 @@ class ComponentsRegistry
                 $schemaName .= $suffix;
             }
 
-            $this->schemaNamesByClassNameAndGroup[$className][Undefined::VALUE->value] = $schemaName;
+            $this->schemaNamesByClassNameAndGroup[$className][$group] = $schemaName;
             $this->existingSchemas[$schemaName] = $refPrefix.$schemaName;
         }
 
-        $schemaName = $this->schemaNamesByClassNameAndGroup[$className][Undefined::VALUE->value];
+        $schemaName = $this->schemaNamesByClassNameAndGroup[$className][$group];
 
         return '#/components/schemas/'.$schemaName;
     }
