@@ -12,7 +12,7 @@ class MediaType implements \JsonSerializable
 
     /**
      * @param array<Example|Reference> $examples
-     * @param array<Encoding>          $encoding
+     * @param array<string, Encoding>  $encoding
      */
     public function __construct(
         public Undefined|Schema $schema = Undefined::VALUE,
