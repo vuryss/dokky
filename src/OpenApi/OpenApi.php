@@ -11,11 +11,11 @@ class OpenApi implements \JsonSerializable
     use JsonSerializableTrait;
 
     /**
-     * @param array<Server>                     $servers
-     * @param array<string, PathItem>           $paths
-     * @param array<string, PathItem>           $webhooks
-     * @param Undefined|Tag[]                   $tags
-     * @param Undefined|array<string, string[]> $security
+     * @param array<Server>                           $servers
+     * @param array<string, PathItem>                 $paths
+     * @param array<string, PathItem>                 $webhooks
+     * @param Undefined|Tag[]                         $tags
+     * @param Undefined|list<array<string, string[]>> $security
      */
     public function __construct(
         public string $openapi,
