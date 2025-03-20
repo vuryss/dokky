@@ -2,7 +2,7 @@
     "extends": ["config:best-practices"],
     "labels": ["renovate"],
     "schedule": [
-        "0 1-5 * * 0"
+        "* 1-5 * * 0"
     ],
     "prHourlyLimit": 10,
     "prConcurrentLimit": 10,
