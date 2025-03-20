@@ -39,3 +39,18 @@ test(
         ;
     }
 );
+
+test(
+    'Cannot generate reference to invalid class',
+    function (): void {
+        $componentsRegistry = new Dokky\ComponentsRegistry();
+        $className = 'InvalidClassName';
+
+        expect(fn () => $componentsRegistry->getSchemaReference($className))
+            ->toThrow(
+                Dokky\DokkyException::class,
+                'Cannot get reference for class "InvalidClassName" - class does not exist'
+            )
+        ;
+    }
+);

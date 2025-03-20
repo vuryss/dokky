@@ -32,7 +32,6 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         ?ComponentsRegistry $componentsRegistry = null,
         ?PropertyContextReaderInterface $propertyContextReader = null,
     ) {
-        // TODO: Use cached extractors
         $this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
         $this->componentsRegistry = $componentsRegistry ?? new ComponentsRegistry();
         $this->propertyContextReader = $propertyContextReader ?? new ChainPropertyContextReader([
@@ -65,7 +64,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $propertyNames = $this->propertyInfoExtractor->getProperties($className);
 
         if (null === $propertyNames) {
-            throw new \RuntimeException(sprintf('No properties found for class "%s"', $className));
+            throw new DokkyException(sprintf('No properties found for class "%s"', $className));
         }
 
         $properties = [];
@@ -152,7 +151,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             if ($this->isPropertyAllowedOnlyNull($reflectionProperty)) {
                 $schema = new Schema(type: Schema\Type::NULL);
             } else {
-                throw new \RuntimeException(
+                throw new DokkyException(
                     sprintf('No type found for property "%s" in class "%s"', $propertyName, $className)
                 );
             }

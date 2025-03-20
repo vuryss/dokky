@@ -30,6 +30,7 @@ dataset('class-schemas', [
                 'nullProperty' => new Schema(type: Type::NULL),
                 'falseProperty' => new Schema(type: Type::BOOLEAN, enum: [false]),
                 'trueProperty' => new Schema(type: Type::BOOLEAN, enum: [true]),
+                'objectProperty' => new Schema(type: Type::OBJECT),
             ],
             required: [
                 'someStringProperty',
@@ -38,6 +39,7 @@ dataset('class-schemas', [
                 'nullProperty',
                 'falseProperty',
                 'trueProperty',
+                'objectProperty',
             ],
         ),
     ],
@@ -152,6 +154,14 @@ dataset('class-schemas', [
         'expectedSchema' => new Schema(
             type: Type::STRING,
             enum: ['A', 'B', 'C'],
+        ),
+    ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\SomeIntBackedEnum::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::INTEGER,
+            enum: [1, 2, 3],
         ),
     ],
     [

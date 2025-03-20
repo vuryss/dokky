@@ -19,4 +19,6 @@ class Basic
     public false $falseProperty;
 
     public true $trueProperty;
+
+    public object $objectProperty;
 }

@@ -33,7 +33,10 @@ class ComponentsRegistry
             try {
                 $shortClassName = new \ReflectionClass($className)->getShortName();
             } catch (\ReflectionException $e) {
-                throw new \RuntimeException('Class '.$className.' does not exist', previous: $e);
+                throw new DokkyException(
+                    sprintf('Cannot get reference for class "%s" - class does not exist', $className),
+                    previous: $e
+                );
             }
 
             $schemaName = $shortClassName;
