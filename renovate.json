@@ -1,0 +1,27 @@
+{
+    "extends": ["config:best-practices"],
+    "labels": ["renovate"],
+    "schedule": [
+        "0 1-5 * * 0"
+    ],
+    "prHourlyLimit": 10,
+    "prConcurrentLimit": 10,
+    "packageRules": [
+        {
+            "groupName": "Update composer packages to non-major versions",
+            "matchPackageNames": ["*"],
+            "matchUpdateTypes": ["minor", "patch"],
+            "matchManagers": ["composer"]
+        },
+        {
+            "groupName": "Update local docker-compose env dependencies",
+            "matchPackageNames": ["*"],
+            "matchManagers": ["docker-compose"]
+        },
+        {
+            "groupName": "Update github actions",
+            "matchPackageNames": ["*"],
+            "matchManagers": ["github-actions"]
+        }
+    ]
+}

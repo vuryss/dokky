@@ -1,0 +1,26 @@
+name: Tests
+on: [ push, pull_request ]
+permissions: read-all
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+            -   name: Set up php 8.4
+                uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1
+                with:
+                    php-version: '8.4'
+            -   name: Install dependencies
+                run: composer self-update && composer install && composer dump-autoload
+            -   name: Run tests
+                run: vendor/bin/pest
+            -   name: Check code style
+                run: PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --diff --dry-run --using-cache=no
+            -   name: Check for code issues
+                run: vendor/bin/phpstan analyse --memory-limit 1G
+            -   name: Check workflow files
+                run: |
+                    bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+                    ./actionlint -color
+                shell: bash
