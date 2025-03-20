@@ -14,14 +14,19 @@
             "matchManagers": ["composer"]
         },
         {
-            "groupName": "Update local docker-compose env dependencies",
+            "groupName": "Update local docker & docker-compose env dependencies",
             "matchPackageNames": ["*"],
-            "matchManagers": ["docker-compose"]
+            "matchManagers": ["docker-compose", "dockerfile"]
         },
         {
             "groupName": "Update github actions",
             "matchPackageNames": ["*"],
             "matchManagers": ["github-actions"]
+        },
+        {
+            "matchPackageNames": ["php"],
+            "matchUpdateTypes": ["pinDigest", "digest"],
+            "enabled": false
         }
     ]
 }
