@@ -17,6 +17,7 @@ To be used inside frameworks for automatic generation of API Documentation (simi
 
 ## Features
 
+- Provides OpenAPI class abstractions for easy manipulation of OpenAPI structures via PHP objects.
 - Provides attributes for decorating classes and properties indicating how they should be represented in OpenAPI.
 - Supports Symfony serializer and validator attributes for seamless integration.
 - Generates OpenAPI Schemas based on PHP Classes and their properties. Correctly parses PHP Types and type annotations.
@@ -41,8 +42,8 @@ class DataWithSchemaOverwrite
 
 ### Considering nullable properties as not-required
 
-Sometimes to be consistent with serializers, which can skip null values, you might want to consider nullable properties
-as not-required. In this case you can use a configuration option to switch the required property behavior.
+Sometimes, to be consistent with serializers, which can skip null values, you might want to consider nullable properties
+as not-required. In this case, you can use a configuration option to switch the required property behavior.
 
 This can be done by passing a configuration object to the class schema generator like this:
 
