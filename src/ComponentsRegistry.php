@@ -6,6 +6,8 @@ namespace Dokky;
 
 class ComponentsRegistry
 {
+    private const string NO_GROUP_DEFINED = '67dd70e96b6db';
+
     /**
      * @var array<class-string, array<string, string>>
      */
@@ -17,19 +19,29 @@ class ComponentsRegistry
     private array $existingSchemas = [];
 
     /**
+     * Groups hash to array of group names.
+     *
+     * @var array<string, string[]|null>
+     */
+    private array $groupsMap = [
+        self::NO_GROUP_DEFINED => null,
+    ];
+
+    /**
      * @param class-string  $className
      * @param array<string> $groups
      */
     public function getSchemaReference(string $className, ?array $groups = null): string
     {
-        $group = Undefined::VALUE->value;
+        $groupHash = self::NO_GROUP_DEFINED;
 
         if (null !== $groups) {
             sort($groups);
-            $group = implode(',', $groups);
+            $groupHash = 'hash-'.crc32(implode(',', $groups));
+            $this->groupsMap[$groupHash] = $groups;
         }
 
-        if (!isset($this->schemaNamesByClassNameAndGroup[$className][$group])) {
+        if (!isset($this->schemaNamesByClassNameAndGroup[$className][$groupHash])) {
             try {
                 $shortClassName = new \ReflectionClass($className)->getShortName();
             } catch (\ReflectionException $e) {
@@ -52,27 +64,27 @@ class ComponentsRegistry
                 $schemaName .= $suffix;
             }
 
-            $this->schemaNamesByClassNameAndGroup[$className][$group] = $schemaName;
+            $this->schemaNamesByClassNameAndGroup[$className][$groupHash] = $schemaName;
             $this->existingSchemas[$schemaName] = $refPrefix.$schemaName;
         }
 
-        $schemaName = $this->schemaNamesByClassNameAndGroup[$className][$group];
+        $schemaName = $this->schemaNamesByClassNameAndGroup[$className][$groupHash];
 
         return '#/components/schemas/'.$schemaName;
     }
 
     /**
-     * @return list<array{className: class-string, groupName: string, schemaName: string}>
+     * @return list<array{className: class-string, groups: string[]|null, schemaName: string}>
      */
     public function getSchemaComponents(): array
     {
         $schemaComponents = [];
 
         foreach ($this->schemaNamesByClassNameAndGroup as $className => $groupReference) {
-            foreach ($groupReference as $groupName => $schemaName) {
+            foreach ($groupReference as $groupHash => $schemaName) {
                 $schemaComponents[] = [
                     'className' => $className,
-                    'groupName' => $groupName,
+                    'groups' => $this->groupsMap[$groupHash],
                     'schemaName' => $schemaName,
                 ];
             }
