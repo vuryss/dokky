@@ -18,6 +18,29 @@ test(
 )->with('class-schemas');
 
 test(
+    'Can generate Json Schema from Class with default nullable configuration',
+
+    /**
+     * @param class-string  $className
+     * @param array<string> $groups
+     */
+    function (string $className, ?array $groups, Dokky\OpenApi\Schema $expectedSchema) {
+        $configuration = new Dokky\Configuration(
+            considerNullablePropertiesAsNotRequired: true,
+        );
+        $schema = cleanObject(
+            new Dokky\ClassSchemaGenerator\ClassSchemaGenerator(configuration: $configuration)
+                ->generate($className, $groups)
+        );
+        $expectedSchema = cleanObject($expectedSchema);
+
+        expect($schema)
+            ->toBeValidJsonSchema()
+            ->toEqual($expectedSchema);
+    }
+)->with('class-schemas-with-non-required-nullables');
+
+test(
     'Cannot get schema for empty class without properties',
     function () {
         $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator();

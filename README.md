@@ -39,6 +39,21 @@ class DataWithSchemaOverwrite
 }
 ```
 
+### Considering nullable properties as not-required
+
+Sometimes to be consistent with serializers, which can skip null values, you might want to consider nullable properties
+as not-required. In this case you can use a configuration option to switch the required property behavior.
+
+This can be done by passing a configuration object to the class schema generator like this:
+
+```php
+$configuration = new \Dokky\Configuration(
+    considerNullablePropertiesAsNotRequired: true,
+);
+new Dokky\ClassSchemaGenerator\ClassSchemaGenerator(configuration: $configuration)
+```
+
+
 ### Full documentation example
 ```php
 $componentsRegistry = new Dokky\ComponentsRegistry();

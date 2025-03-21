@@ -10,6 +10,7 @@ use Dokky\ClassSchemaGenerator\PropertyContextReader\ChainPropertyContextReader;
 use Dokky\ClassSchemaGenerator\PropertyContextReader\SymfonyPropertyContextReader;
 use Dokky\ClassSchemaGeneratorInterface;
 use Dokky\ComponentsRegistry;
+use Dokky\Configuration;
 use Dokky\DokkyException;
 use Dokky\OpenApi\Discriminator;
 use Dokky\OpenApi\Schema;
@@ -26,11 +27,13 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
     private PropertyInfoExtractorInterface $propertyInfoExtractor;
     private ComponentsRegistry $componentsRegistry;
     private PropertyContextReaderInterface $propertyContextReader;
+    private Configuration $configuration;
 
     public function __construct(
         ?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
         ?ComponentsRegistry $componentsRegistry = null,
         ?PropertyContextReaderInterface $propertyContextReader = null,
+        ?Configuration $configuration = null,
     ) {
         $this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
         $this->componentsRegistry = $componentsRegistry ?? new ComponentsRegistry();
@@ -38,6 +41,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             new AttributePropertyContextReader(),
             new SymfonyPropertyContextReader(),
         ]);
+        $this->configuration = $configuration ?? new Configuration();
     }
 
     public function generate(string $className, ?array $groups = null): Schema
@@ -126,7 +130,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
                 $propertySchema->exclusiveMaximum = $propertyContext->exclusiveMaximum;
             }
 
-            if (Undefined::VALUE === $propertySchema->default) {
+            if ($this->isPropertyRequired($propertySchema)) {
                 $required[] = $finalName;
             }
 
@@ -381,5 +385,34 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
                 ),
             ),
         );
+    }
+
+    private function isPropertyRequired(Schema $propertySchema): bool
+    {
+        // If property has default value it is not required
+        if (Undefined::VALUE !== $propertySchema->default) {
+            return false;
+        }
+
+        // Property does not have a default value - check if we have the flag for making nullable properties not
+        // required and if we have a null as a possible type
+        if (
+            $this->configuration->considerNullablePropertiesAsNotRequired
+            && (
+                Schema\Type::NULL === $propertySchema->type
+                || (
+                    is_array($propertySchema->type)
+                    && array_any($propertySchema->type, static fn ($type) => Schema\Type::NULL === $type)
+                )
+                || (
+                    is_array($propertySchema->anyOf)
+                    && array_any($propertySchema->anyOf, static fn ($schema) => Schema\Type::NULL === $schema->type)
+                )
+            )
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }
