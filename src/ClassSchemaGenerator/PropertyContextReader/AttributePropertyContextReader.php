@@ -104,6 +104,15 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
             return $attribute->schema;
         }
 
+        if (count($attributes) > 1) {
+            throw new DokkyException(sprintf(
+                'Property "%s" of class "%s" has multiple "%s" attributes, only one is allowed',
+                $property->getName(),
+                $property->getDeclaringClass()->getName(),
+                \Dokky\Attribute\Property::class,
+            ));
+        }
+
         return null;
     }
 }
