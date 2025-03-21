@@ -49,3 +49,15 @@ test(
     Dokky\DokkyException::class,
     'Expected numeric value, got: string'
 );
+
+test(
+    'Property attribute should be used only once on a property',
+    function () {
+        new Dokky\ClassSchemaGenerator\ClassSchemaGenerator()
+            ->generate(Dokky\Tests\Datasets\Classes\InvalidVariant5::class);
+    }
+)
+->throws(
+    Dokky\DokkyException::class,
+    'Property "property1" of class "Dokky\Tests\Datasets\Classes\InvalidVariant5" has multiple "Dokky\Attribute\Property" attributes, only one is allowed'
+);

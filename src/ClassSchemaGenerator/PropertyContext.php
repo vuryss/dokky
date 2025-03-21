@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Dokky\ClassSchemaGenerator;
 
+use Dokky\OpenApi\Schema;
+
 readonly class PropertyContext
 {
     /**
@@ -21,6 +23,7 @@ readonly class PropertyContext
         public int|float|null $maximum = null,
         public int|float|null $exclusiveMinimum = null,
         public int|float|null $exclusiveMaximum = null,
+        public ?Schema $schema = null,
     ) {
     }
 }
