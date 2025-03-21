@@ -73,4 +73,15 @@ class Schema implements \JsonSerializable
         public Undefined|bool $uniqueItems = Undefined::VALUE,
     ) {
     }
+
+    public function manualOverwrite(self $schema): self
+    {
+        foreach (get_object_vars($schema) as $key => $value) {
+            if (!$value instanceof Undefined) {
+                $this->{$key} = $value;
+            }
+        }
+
+        return $this;
+    }
 }

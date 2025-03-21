@@ -129,6 +129,10 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             if (Undefined::VALUE === $propertySchema->default) {
                 $required[] = $finalName;
             }
+
+            if (null !== $propertyContext->schema) {
+                $propertySchema->manualOverwrite($propertyContext->schema);
+            }
         }
 
         $schema->properties = $properties;

@@ -30,6 +30,7 @@ readonly class ChainPropertyContextReader implements PropertyContextReaderInterf
         $maximum = null;
         $exclusiveMinimum = null;
         $exclusiveMaximum = null;
+        $schema = null;
 
         foreach ($this->readers as $reader) {
             $context = $reader->extract($property);
@@ -45,6 +46,7 @@ readonly class ChainPropertyContextReader implements PropertyContextReaderInterf
             $maximum ??= $context->maximum;
             $exclusiveMinimum ??= $context->exclusiveMinimum;
             $exclusiveMaximum ??= $context->exclusiveMaximum;
+            $schema ??= $context->schema;
         }
 
         return new PropertyContext(
@@ -59,6 +61,7 @@ readonly class ChainPropertyContextReader implements PropertyContextReaderInterf
             maximum: $maximum,
             exclusiveMinimum: $exclusiveMinimum,
             exclusiveMaximum: $exclusiveMaximum,
+            schema: $schema,
         );
     }
 }

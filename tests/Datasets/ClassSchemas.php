@@ -533,4 +533,20 @@ dataset('class-schemas', [
             )
         ),
     ],
+    [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithSchemaOverwrite::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property' => new Schema(
+                    type: Type::STRING,
+                    description: 'Some description',
+                    examples: ['test1', 'test2'],
+                    enum: ['test1', 'test2', 'test3'],
+                ),
+            ],
+            required: ['property'],
+        ),
+    ],
 ]);

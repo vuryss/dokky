@@ -10,6 +10,7 @@ use Dokky\ClassSchemaGenerator\PropertyContext;
 use Dokky\ClassSchemaGenerator\PropertyContextReaderInterface;
 use Dokky\ClassSchemaGenerator\Util;
 use Dokky\DokkyException;
+use Dokky\OpenApi\Schema;
 
 readonly class AttributePropertyContextReader implements PropertyContextReaderInterface
 {
@@ -29,6 +30,7 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
             maximum: $constraints->maximum,
             exclusiveMinimum: $constraints->exclusiveMinimum,
             exclusiveMaximum: $constraints->exclusiveMaximum,
+            schema: $this->extractManuallyDefinedSchema($property),
         );
     }
 
@@ -90,5 +92,18 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         }
 
         return new Constraints();
+    }
+
+    private function extractManuallyDefinedSchema(\ReflectionProperty $property): ?Schema
+    {
+        $attributes = $property->getAttributes(\Dokky\Attribute\Property::class);
+
+        if (1 === count($attributes)) {
+            $attribute = $attributes[0]->newInstance();
+
+            return $attribute->schema;
+        }
+
+        return null;
     }
 }

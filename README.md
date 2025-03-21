@@ -3,6 +3,7 @@
 *Empower APIs with Seamless Documentation Precision*
 
 [![codecov](https://codecov.io/github/vuryss/dokky/branch/master/graph/badge.svg?token=XXj2PesW0g)](https://codecov.io/github/vuryss/dokky)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/vuryss/dokky?utm_source=oss&utm_medium=github&utm_campaign=vuryss%2Fdokky&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 ## Overview
 
@@ -22,6 +23,23 @@ To be used inside frameworks for automatic generation of API Documentation (simi
 
 ## Example usage:
 
+### Overwriting single property's schema
+
+```php
+class DataWithSchemaOverwrite
+{
+    #[Property(
+        schema: new Schema(
+            description: 'Some description',
+            examples: ['test1', 'test2'],
+            enum: ['test1', 'test2', 'test3']
+        )
+    )]
+    public string $property;
+}
+```
+
+### Full documentation example
 ```php
 $componentsRegistry = new Dokky\ComponentsRegistry();
 $componentsGenerator = new Dokky\ComponentsGenerator(
