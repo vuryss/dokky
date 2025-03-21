@@ -32,6 +32,7 @@ readonly class ComponentsGenerator
 
                 $schemas[$schemaComponentMetadata['schemaName']] = $this->classSchemaGenerator->generate(
                     className: $schemaComponentMetadata['className'],
+                    groups: $schemaComponentMetadata['groups'],
                 );
 
                 $hasNewSchema = true;
