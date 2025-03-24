@@ -42,6 +42,24 @@ expect()->extend('toBeValidJsonSchema', function () {
     return $this;
 });
 
+expect()->extend('toBeValidOpenApiSchema', function () {
+    $validator = new JsonSchema\Validator();
+    $validator->validate(
+        $this->value,
+        (object) ['$ref' => 'file://'.__DIR__.'/schemas/openapi/schema.json']
+    );
+
+    $errorMessages = [];
+
+    foreach ($validator->getErrors() as $error) {
+        $errorMessages[] = sprintf("[%s] %s\n", $error['property'], $error['message']);
+    }
+
+    expect($validator->isValid())->toBeTrue(implode(PHP_EOL, $errorMessages));
+
+    return $this;
+});
+
 /*
 |--------------------------------------------------------------------------
 | Functions
