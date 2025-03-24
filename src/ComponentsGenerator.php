@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Dokky;
 
-use Dokky\ClassSchemaGenerator\ClassSchemaGenerator;
 use Dokky\OpenApi\Components;
 
 readonly class ComponentsGenerator
 {
     public function __construct(
         private ComponentsRegistry $componentsRegistry,
-        private ClassSchemaGenerator $classSchemaGenerator,
+        private ClassSchemaGeneratorInterface $classSchemaGenerator,
     ) {
     }
 
