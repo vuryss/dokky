@@ -101,10 +101,10 @@ test(
                                     ),
                                 ],
                             ),
-                            '401' => new Dokky\OpenApi\Reference(
+                            401 => new Dokky\OpenApi\Reference(
                                 ref: '#/components/responses/Unauthorized',
                             ),
-                            '404' => new Dokky\OpenApi\Response(
+                            404 => new Dokky\OpenApi\Response(
                                 description: 'User not found',
                             ),
                         ],
@@ -169,6 +169,8 @@ test(
         );
 
         expect($openApi)
-            ->not->toBeEmpty();
+            ->not->toBeEmpty()
+            ->and(cleanObject($openApi))
+            ->toBeValidOpenApiSchema();
     }
 );

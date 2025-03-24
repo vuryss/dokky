@@ -16,7 +16,7 @@ class Operation implements \JsonSerializable
      * @param array<string, array<string, PathItem|Reference>|Reference>|Undefined $callbacks
      * @param array<string, string[]>                                              $security
      * @param array<Server>                                                        $servers
-     * @param Undefined|array<string, Response|Reference>                          $responses
+     * @param Undefined|array<string|int, Response|Reference>                      $responses
      */
     public function __construct(
         public Undefined|array $tags = Undefined::VALUE,
