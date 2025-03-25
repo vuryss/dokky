@@ -28,6 +28,11 @@ class ComponentsRegistry
     ];
 
     /**
+     * @var array<class-string, true>
+     */
+    private array $uniqueClassNames = [];
+
+    /**
      * @param class-string  $className
      * @param array<string> $groups
      */
@@ -66,6 +71,7 @@ class ComponentsRegistry
 
             $this->schemaNamesByClassNameAndGroup[$className][$groupHash] = $schemaName;
             $this->existingSchemas[$schemaName] = $refPrefix.$schemaName;
+            $this->uniqueClassNames[$className] = true;
         }
 
         $schemaName = $this->schemaNamesByClassNameAndGroup[$className][$groupHash];
@@ -91,5 +97,15 @@ class ComponentsRegistry
         }
 
         return $schemaComponents;
+    }
+
+    /**
+     * Useful for debugging and also determine the classes to watch for changes when caching.
+     *
+     * @return array<class-string>
+     */
+    public function getUniqueClassNames(): array
+    {
+        return array_keys($this->uniqueClassNames);
     }
 }
