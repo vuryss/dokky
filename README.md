@@ -97,7 +97,7 @@ $openApi = new Dokky\OpenApi\OpenApi(
 
 ### Retrieving full list of used classes
 
-For debugging purposes you might need the full list of classes used in the OpenAPI schema.
+For debugging purposes, you might need the full list of classes used in the OpenAPI schema.
 Also, if you like to apply some caching based on whether any of the classes changed, you can use this method to get the
 list of classes used in the OpenAPI schema.
 
