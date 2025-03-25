@@ -12,7 +12,13 @@ test(
         expect($componentsRegistry->getSchemaReference($className))
             ->toBe('#/components/schemas/DataWithGroups')
             ->and($componentsRegistry->getSchemaReference($className2))
-            ->toBe('#/components/schemas/Basic');
+            ->toBe('#/components/schemas/Basic')
+            ->and($componentsRegistry->getUniqueClassNames())
+            ->toBe([
+                Dokky\Tests\Datasets\Classes\DataWithGroups::class,
+                Dokky\Tests\Datasets\Classes\Basic::class,
+            ])
+        ;
     }
 );
 
@@ -110,6 +116,9 @@ test(
                 'groups' => null,
                 'schemaName' => 'DataWithGroups4',
             ])
+
+            ->and($componentsRegistry->getUniqueClassNames())
+            ->toBe([Dokky\Tests\Datasets\Classes\DataWithGroups::class])
         ;
     }
 );
