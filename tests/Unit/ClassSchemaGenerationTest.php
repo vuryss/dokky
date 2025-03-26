@@ -69,3 +69,23 @@ test(
             ->toThrow(Dokky\DokkyException::class);
     },
 );
+
+test(
+    'Associative array with multiple key types is not supported',
+    function () {
+        $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator();
+
+        expect(fn () => $classSchemaGenerator->generate(Dokky\Tests\Datasets\Classes\InvalidVariant6::class))
+            ->toThrow(Dokky\DokkyException::class);
+    },
+);
+
+test(
+    'Associative array with invalid key type is not supported',
+    function () {
+        $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator();
+
+        expect(fn () => $classSchemaGenerator->generate(Dokky\Tests\Datasets\Classes\InvalidVariant7::class))
+            ->toThrow(Dokky\DokkyException::class);
+    },
+);

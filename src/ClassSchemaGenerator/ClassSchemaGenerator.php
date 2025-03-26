@@ -206,12 +206,52 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
                 case Type::BUILTIN_TYPE_ARRAY:
                 case Type::BUILTIN_TYPE_ITERABLE:
                     $subTypes = $type->getCollectionValueTypes();
+                    $keyTypes = $type->getCollectionKeyTypes();
 
-                    $schemas[] = new Schema(
-                        type: Schema\Type::ARRAY,
-                        items: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
-                    );
-                    break;
+                    if ([] === $keyTypes) {
+                        $schemas[] = new Schema(
+                            type: Schema\Type::ARRAY,
+                            items: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
+                        );
+
+                        break;
+                    }
+
+                    if (count($keyTypes) > 1) {
+                        throw new DokkyException(
+                            sprintf('Cannot handle multiple key types for property "%s"', $reflectionProperty->getName())
+                        );
+                    }
+
+                    switch ($keyTypes[0]->getBuiltinType()) {
+                        case 'string':
+                            $schemas[] = new Schema(
+                                type: Schema\Type::OBJECT,
+                                additionalProperties: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
+                            );
+                            break 2;
+
+                        case 'int':
+                            $schemas[] = new Schema(
+                                type: Schema\Type::OBJECT,
+                                additionalProperties: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
+                                propertyNames: new Schema(
+                                    type: Schema\Type::STRING,
+                                    pattern: '^[0-9]+$',
+                                ),
+                            );
+                            break 2;
+
+                        default:
+                            throw new DokkyException(
+                                sprintf(
+                                    'Cannot handle key type "%s" for property "%s"',
+                                    $keyTypes[0]->getBuiltinType(),
+                                    $reflectionProperty->getName()
+                                )
+                            );
+                    }
+                    // no break
                 case Type::BUILTIN_TYPE_OBJECT:
                     if (null !== $type->getClassName()) {
                         /** @var class-string $className */

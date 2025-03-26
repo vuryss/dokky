@@ -20,4 +20,14 @@ class DataWithArrays
      * @var array<Basic|MultiType|int>
      */
     public array $arrayOfMultipleMixedTypes;
+
+    /**
+     * @var array<string, Basic>
+     */
+    public array $arrayWithStringKeys;
+
+    /**
+     * @var array<int, Basic>
+     */
+    public array $arrayWithIntKeys;
 }
