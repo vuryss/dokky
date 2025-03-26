@@ -30,4 +30,19 @@ class DataWithArrays
      * @var array<int, Basic>
      */
     public array $arrayWithIntKeys;
+
+    /**
+     * @var Basic[]
+     */
+    public array $alternateArrayDefinition;
+
+    /**
+     * @var list<Basic>
+     */
+    public array $alternateArrayDefinition2;
+
+    /**
+     * @var iterable<Basic>
+     */
+    public array $alternateArrayDefinition3;
 }

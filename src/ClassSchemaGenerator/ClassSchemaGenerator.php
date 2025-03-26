@@ -233,12 +233,8 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 
                         case 'int':
                             $schemas[] = new Schema(
-                                type: Schema\Type::OBJECT,
-                                additionalProperties: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
-                                propertyNames: new Schema(
-                                    type: Schema\Type::STRING,
-                                    pattern: '^[0-9]+$',
-                                ),
+                                type: Schema\Type::ARRAY,
+                                items: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
                             );
                             break 2;
 

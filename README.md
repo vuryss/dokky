@@ -40,6 +40,47 @@ class DataWithSchemaOverwrite
 }
 ```
 
+### Array schema handling
+
+Array type can usually be declared in several ways, here are the two supported cases:
+
+1. List of elements of given type. Represented as JSON array type. Must be sequentially indexed array.
+
+- `array<Type>`
+- `array<int, Type>`
+- `Type[]`
+- `list<Type>`
+- `iterable<Type>`
+
+Example JSON structure:
+```json
+[
+    {/*Type object*/},
+    {/*Type object*/}
+]
+```
+
+2. Associative array of given type. Represented as JSON object type. JSON objects always have string keys, even if
+  they are integers in PHP.
+
+- `array<string, Type>`
+
+Example JSON structure:
+```json
+{
+    "key1": {/*Type object*/},
+    "key2": {/*Type object*/}
+}
+```
+
+Even with non-sequential integer keys, still JSON object:
+```json
+{
+    "100": {/*Type object*/},
+    "200": {/*Type object*/}
+}
+```
+
 ### Considering nullable properties as not-required
 
 Sometimes, to be consistent with serializers, which can skip null values, you might want to consider nullable properties
