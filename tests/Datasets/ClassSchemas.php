@@ -128,8 +128,23 @@ dataset('class-schemas', [
                         pattern: '^[0-9]+$',
                     ),
                 ),
+                'alternateArrayDefinition' => new Schema(
+                    type: Type::OBJECT,
+                    additionalProperties: new Schema(ref: '#/components/schemas/Basic'),
+                    propertyNames: new Schema(
+                        type: Type::STRING,
+                        pattern: '^[0-9]+$',
+                    ),
+                ),
             ],
-            required: ['arrayOfScalar', 'arrayOfObjects', 'arrayOfMultipleMixedTypes', 'arrayWithStringKeys', 'arrayWithIntKeys'],
+            required: [
+                'arrayOfScalar',
+                'arrayOfObjects',
+                'arrayOfMultipleMixedTypes',
+                'arrayWithStringKeys',
+                'arrayWithIntKeys',
+                'alternateArrayDefinition',
+            ],
         ),
     ],
     [
