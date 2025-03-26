@@ -42,12 +42,17 @@ class DataWithSchemaOverwrite
 
 ### Array schema handling
 
-Array type can usually be declared in several ways, however due to how symfony property info parses those, there are few
-differences that you should be aware of:
+Array type can usually be declared in several ways, here are the two supported cases:
 
-- `array<Type>` - List of items of type `Type`, in terms of JSON this is the usual array type
+1. List of elements of given type. Represented as JSON array type. Must be sequentially indexed array.
 
-Use this when you expect structure like this:
+- `array<Type>`
+- `array<int, Type>`
+- `Type[]`
+- `list<Type>`
+- `iterable<Type>`
+
+Example JSON structure:
 ```json
 [
     {/*Type object*/},
@@ -55,10 +60,12 @@ Use this when you expect structure like this:
 ]
 ```
 
-- `array<string, Type>` - Associative array with string keys and values of type `Type`, in terms of JSON this is an object
-  which accepts any string as a key and values of type `Type`
+2. Associative array of given type. Represented as JSON object type. JSON objects always have string keys, even if
+  they are integers in PHP.
 
-Use this when you expect structure like this:
+- `array<string, Type>`
+
+Example JSON structure:
 ```json
 {
     "key1": {/*Type object*/},
@@ -66,25 +73,11 @@ Use this when you expect structure like this:
 }
 ```
 
-- `array<int, Type>` - Associative array with integer keys and values of type `Type`, in terms of JSON this is an object
-  which accepts any integer as a key (non-sequential integer keys are objects in JSON terms) and values of type `Type`
-
-Use this when you expect structure like this:
+Even with non-sequential integer keys, still JSON object:
 ```json
 {
-    "200": {/*Type object*/},
-    "400": {/*Type object*/}
-}
-```
-
-- `Type[]` - Same as `array<int, Type>` due to how symfony property info parses this type. Please use only `array<Type>`
-  for actual lists, cause this makes the schema expect an object with numeric keys instead of an array.
-
-Use this when you expect structure like this:
-```json
-{
-    "200": {/*Type object*/},
-    "400": {/*Type object*/}
+    "100": {/*Type object*/},
+    "200": {/*Type object*/}
 }
 ```
 

@@ -121,20 +121,20 @@ dataset('class-schemas', [
                     additionalProperties: new Schema(ref: '#/components/schemas/Basic'),
                 ),
                 'arrayWithIntKeys' => new Schema(
-                    type: Type::OBJECT,
-                    additionalProperties: new Schema(ref: '#/components/schemas/Basic'),
-                    propertyNames: new Schema(
-                        type: Type::STRING,
-                        pattern: '^[0-9]+$',
-                    ),
+                    type: Type::ARRAY,
+                    items: new Schema(ref: '#/components/schemas/Basic')
                 ),
                 'alternateArrayDefinition' => new Schema(
-                    type: Type::OBJECT,
-                    additionalProperties: new Schema(ref: '#/components/schemas/Basic'),
-                    propertyNames: new Schema(
-                        type: Type::STRING,
-                        pattern: '^[0-9]+$',
-                    ),
+                    type: Type::ARRAY,
+                    items: new Schema(ref: '#/components/schemas/Basic')
+                ),
+                'alternateArrayDefinition2' => new Schema(
+                    type: Type::ARRAY,
+                    items: new Schema(ref: '#/components/schemas/Basic')
+                ),
+                'alternateArrayDefinition3' => new Schema(
+                    type: Type::ARRAY,
+                    items: new Schema(ref: '#/components/schemas/Basic')
                 ),
             ],
             required: [
@@ -144,6 +144,8 @@ dataset('class-schemas', [
                 'arrayWithStringKeys',
                 'arrayWithIntKeys',
                 'alternateArrayDefinition',
+                'alternateArrayDefinition2',
+                'alternateArrayDefinition3',
             ],
         ),
     ],
