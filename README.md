@@ -136,6 +136,46 @@ $openApi = new Dokky\OpenApi\OpenApi(
 );
 ```
 
+### Using Named Schemas
+
+In some cases, you might want to define a specific name for a schema in the components section, rather than relying on the auto-generated name based on the class. You can achieve this using the `getNamedSchemaReference` method:
+
+```php
+$componentsRegistry = new Dokky\ComponentsRegistry();
+
+// Register a class with a specific schema name
+$userSchemaRef = $componentsRegistry->getNamedSchemaReference(
+    className: User::class,
+    schemaName: 'DetailedUserOutput'
+); // Returns '#/components/schemas/DetailedUserOutput'
+
+// You can still use the auto-generated name if needed elsewhere
+$basicUserRef = $componentsRegistry->getSchemaReference(User::class); // Returns '#/components/schemas/User' (or similar if name conflicts)
+
+// Use the named reference in your OpenAPI definition
+$openApi = new Dokky\OpenApi\OpenApi(
+    // ... other properties
+    paths: [
+        '/user/{id}' => new Dokky\OpenApi\PathItem(
+            get: new Dokky\OpenApi\Operation(
+                responses: [
+                    '200' => new Dokky\OpenApi\Response(
+                        description: 'Detailed user data',
+                        content: [
+                            'application/json' => new Dokky\OpenApi\MediaType(
+                                schema: new Dokky\OpenApi\Schema(ref: $userSchemaRef), // Use the named reference
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        ),
+    ],
+    // ... components generation will include both 'DetailedUserOutput' and 'User' schemas
+);
+
+```
+
 ### Retrieving full list of used classes
 
 For debugging purposes, you might need the full list of classes used in the OpenAPI schema.
