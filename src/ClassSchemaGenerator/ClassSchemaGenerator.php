@@ -154,6 +154,9 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         \ReflectionProperty $reflectionProperty,
     ): Schema {
         $foundTypes = $this->propertyInfoExtractor->getTypes($className, $propertyName);
+        $shortDescription = $this->propertyInfoExtractor->getShortDescription($className, $propertyName);
+        $longDescription = $this->propertyInfoExtractor->getLongDescription($className, $propertyName);
+        $description = trim(($shortDescription ?? '').($longDescription ? "\n".$longDescription : ''));
 
         if (null === $foundTypes) {
             if ($this->isPropertyAllowedOnlyNull($reflectionProperty)) {
@@ -168,6 +171,10 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         }
 
         $schema->default = $this->determineDefaultValue($reflectionProperty);
+
+        if ('' !== $description) {
+            $schema->description = $description;
+        }
 
         return $schema;
     }

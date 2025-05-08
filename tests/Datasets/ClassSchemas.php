@@ -491,6 +491,32 @@ dataset('class-schemas', [
         ),
     ],
     [
+        'className' => Dokky\Tests\Datasets\Classes\DataWithDescription::class,
+        'groups' => null,
+        'expectedSchema' => new Schema(
+            type: Type::OBJECT,
+            properties: [
+                'property1' => new Schema(
+                    type: Type::STRING,
+                    description: "This is a description for property1.\nIt can be multi-line."
+                ),
+                'property2' => new Schema(type: Type::INTEGER),
+                'property3' => new Schema(type: Type::BOOLEAN),
+                'property4' => new Schema(
+                    type: Type::NUMBER,
+                    description: 'this should be included in the description if no other description is provided',
+                    format: 'float',
+                ),
+            ],
+            required: [
+                'property1',
+                'property2',
+                'property3',
+                'property4',
+            ],
+        ),
+    ],
+    [
         'className' => Dokky\Tests\Datasets\Classes\DataWithDiscriminatorMap::class,
         'groups' => null,
         'expectedSchema' => new Schema(
