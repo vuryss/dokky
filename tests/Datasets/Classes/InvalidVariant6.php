@@ -7,7 +7,7 @@ namespace Dokky\Tests\Datasets\Classes;
 class InvalidVariant6
 {
     /**
-     * @var array<int|string, Basic>
+     * @var array<int|bool, Basic>
      */
     public array $multipleKeyTypes = [];
 }

@@ -51,8 +51,8 @@ dataset('class-schemas', [
             properties: [
                 'property' => new Schema(
                     anyOf: [
-                        new Schema(type: Type::STRING),
                         new Schema(type: Type::INTEGER),
+                        new Schema(type: Type::STRING),
                         new Schema(type: Type::NULL),
                     ]
                 ),
@@ -101,8 +101,8 @@ dataset('class-schemas', [
                     type: Type::ARRAY,
                     items: new Schema(
                         anyOf: [
-                            new Schema(ref: '#/components/schemas/MultiType'),
                             new Schema(ref: '#/components/schemas/Basic'),
+                            new Schema(ref: '#/components/schemas/MultiType'),
                         ]
                     )
                 ),
