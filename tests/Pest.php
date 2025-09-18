@@ -77,9 +77,10 @@ function cleanObject(object $object): object
         $json = new Vuryss\Serializer\Serializer()
             ->serialize(
                 $object,
-                [Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true]
+                'json',
+                [Vuryss\Serializer\Context::SKIP_NULL_VALUES => true]
             );
-    } catch (Vuryss\Serializer\SerializerException $e) {
+    } catch (Vuryss\Serializer\ExceptionInterface $e) {
         throw new RuntimeException('Failed to serialize object', 0, $e);
     }
 
