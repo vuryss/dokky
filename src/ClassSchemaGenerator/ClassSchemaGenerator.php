@@ -20,7 +20,6 @@ use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
-use Symfony\Component\PropertyInfo\Type;
 
 readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
@@ -28,6 +27,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
     private ComponentsRegistry $componentsRegistry;
     private PropertyContextReaderInterface $propertyContextReader;
     private Configuration $configuration;
+    private TypeMapper $typeMapper;
 
     public function __construct(
         ?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
@@ -42,6 +42,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             new SymfonyPropertyContextReader(),
         ]);
         $this->configuration = $configuration ?? new Configuration();
+        $this->typeMapper = new TypeMapper($this->componentsRegistry);
     }
 
     public function generate(string $className, ?array $groups = null): Schema
@@ -153,143 +154,22 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         string $propertyName,
         \ReflectionProperty $reflectionProperty,
     ): Schema {
-        $foundTypes = $this->propertyInfoExtractor->getTypes($className, $propertyName);
+        $typeInfoType = $this->propertyInfoExtractor->getType($className, $propertyName);
+
+        if (null === $typeInfoType) {
+            throw new DokkyException(sprintf('No type found for property "%s" in class "%s"', $propertyName, $className));
+        }
+
         $shortDescription = $this->propertyInfoExtractor->getShortDescription($className, $propertyName);
         $longDescription = $this->propertyInfoExtractor->getLongDescription($className, $propertyName);
         $description = trim(($shortDescription ?? '').($longDescription ? "\n".$longDescription : ''));
-
-        if (null === $foundTypes) {
-            if ($this->isPropertyAllowedOnlyNull($reflectionProperty)) {
-                $schema = new Schema(type: Schema\Type::NULL);
-            } else {
-                throw new DokkyException(
-                    sprintf('No type found for property "%s" in class "%s"', $propertyName, $className)
-                );
-            }
-        } else {
-            $schema = $this->getOpenApiSchemaFromTypes($foundTypes, $reflectionProperty);
-        }
+        $schema = $this->typeMapper->typeToSchema($typeInfoType);
 
         $schema->default = $this->determineDefaultValue($reflectionProperty);
 
         if ('' !== $description) {
             $schema->description = $description;
         }
-
-        return $schema;
-    }
-
-    /**
-     * @param array<Type> $types
-     */
-    private function getOpenApiSchemaFromTypes(array $types, \ReflectionProperty $reflectionProperty): Schema
-    {
-        $isNullable = false;
-        $schema = new Schema();
-        $schemas = [];
-
-        foreach ($types as $type) {
-            $isNullable = $isNullable || $type->isNullable();
-
-            switch ($type->getBuiltinType()) {
-                case Type::BUILTIN_TYPE_INT:
-                    $schemas[] = new Schema(type: Schema\Type::INTEGER);
-                    break;
-                case Type::BUILTIN_TYPE_FLOAT:
-                    $schemas[] = new Schema(type: Schema\Type::NUMBER, format: 'float');
-                    break;
-                case Type::BUILTIN_TYPE_STRING:
-                    $schemas[] = new Schema(type: Schema\Type::STRING);
-                    break;
-                case Type::BUILTIN_TYPE_BOOL:
-                    $schemas[] = new Schema(type: Schema\Type::BOOLEAN);
-                    break;
-                case Type::BUILTIN_TYPE_TRUE:
-                    $schemas[] = new Schema(type: Schema\Type::BOOLEAN, enum: [true]);
-                    break;
-                case Type::BUILTIN_TYPE_FALSE:
-                    $schemas[] = new Schema(type: Schema\Type::BOOLEAN, enum: [false]);
-                    break;
-                case Type::BUILTIN_TYPE_ARRAY:
-                case Type::BUILTIN_TYPE_ITERABLE:
-                    $subTypes = $type->getCollectionValueTypes();
-                    $keyTypes = $type->getCollectionKeyTypes();
-
-                    if ([] === $keyTypes) {
-                        $schemas[] = new Schema(
-                            type: Schema\Type::ARRAY,
-                            items: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
-                        );
-
-                        break;
-                    }
-
-                    if (count($keyTypes) > 1) {
-                        throw new DokkyException(
-                            sprintf('Cannot handle multiple key types for property "%s"', $reflectionProperty->getName())
-                        );
-                    }
-
-                    switch ($keyTypes[0]->getBuiltinType()) {
-                        case 'string':
-                            $schemas[] = new Schema(
-                                type: Schema\Type::OBJECT,
-                                additionalProperties: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
-                            );
-                            break 2;
-
-                        case 'int':
-                            $schemas[] = new Schema(
-                                type: Schema\Type::ARRAY,
-                                items: $this->getOpenApiSchemaFromTypes($subTypes, $reflectionProperty),
-                            );
-                            break 2;
-
-                        default:
-                            throw new DokkyException(
-                                sprintf(
-                                    'Cannot handle key type "%s" for property "%s"',
-                                    $keyTypes[0]->getBuiltinType(),
-                                    $reflectionProperty->getName()
-                                )
-                            );
-                    }
-                    // no break
-                case Type::BUILTIN_TYPE_OBJECT:
-                    if (null !== $type->getClassName()) {
-                        /** @var class-string $className */
-                        $className = $type->getClassName();
-
-                        if (in_array($className, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class], true)) {
-                            $schemas[] = new Schema(type: Schema\Type::STRING, format: 'date-time');
-                            break;
-                        }
-
-                        $schemas[] = new Schema(ref: $this->componentsRegistry->getSchemaReference($className));
-                        break;
-                    }
-
-                    $schemas[] = new Schema(type: Schema\Type::OBJECT);
-                    break;
-                case Type::BUILTIN_TYPE_NULL:
-                    $isNullable = true;
-                    break;
-                default:
-                    throw new \RuntimeException(sprintf('Unsupported type "%s"', $type->getBuiltinType()));
-            }
-        }
-
-        if ($isNullable) {
-            $schemas[] = new Schema(type: Schema\Type::NULL);
-        }
-
-        match (count($schemas)) {
-            0 => throw new \RuntimeException(
-                sprintf('No type found for property "%s" in class "%s"', $reflectionProperty->getName(), $reflectionProperty->getDeclaringClass()->getName())
-            ),
-            1 => $schema = $schemas[0],
-            default => $schema->anyOf = $schemas,
-        };
 
         return $schema;
     }
@@ -307,13 +187,6 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             accessExtractors: [$reflectionExtractor],
             initializableExtractors: [$reflectionExtractor],
         );
-    }
-
-    private function isPropertyAllowedOnlyNull(\ReflectionProperty $reflectionProperty): bool
-    {
-        $type = $reflectionProperty->getType();
-
-        return $type instanceof \ReflectionNamedType && 'null' === $type->getName();
     }
 
     private function determineDefaultValue(\ReflectionProperty $reflectionProperty): mixed

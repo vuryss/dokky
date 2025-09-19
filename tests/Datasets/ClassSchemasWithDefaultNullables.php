@@ -51,8 +51,8 @@ dataset('class-schemas-with-non-required-nullables', [
             properties: [
                 'property' => new Schema(
                     anyOf: [
-                        new Schema(type: Type::STRING),
                         new Schema(type: Type::INTEGER),
+                        new Schema(type: Type::STRING),
                         new Schema(type: Type::NULL),
                     ],
                 ),
