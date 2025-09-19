@@ -49,10 +49,10 @@ final readonly class TypeMapper
                 );
             }
 
-            // A very special case - the Symfony Type does not let us know if the key is actually defined in the
-            // docblock - like array<int|string, T> or just array<T>. To avoid manually go and parse the docblock, we
-            // would treat a key of type int|string as a list. May be in the future we can add additional parsing if we
-            // or someone else needs it.
+            // Special case: Symfony Type doesn't distinguish between array<T> (implicit numeric keys) and
+            // array<int|string, T> (explicit mixed keys) in docblocks. Since both cases typically represent
+            // list-like structures in PHP, we treat int|string keys as lists to avoid manual docblock parsing.
+            // Future enhancement: Add docblock parser for precise key type detection if needed.
             $keyType = $type->getCollectionKeyType();
             $keyTypeTreatedAsList = Type::union(Type::int(), Type::string());
 
@@ -113,7 +113,7 @@ final readonly class TypeMapper
             /** @var class-string $className */
             $className = $type->getClassName();
 
-            if (in_array($className, [\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class], true)) {
+            if (is_subclass_of($className, \DateTimeInterface::class) || \DateTimeInterface::class === $className) {
                 return new Schema(type: Schema\Type::STRING, format: 'date-time');
             }
 
