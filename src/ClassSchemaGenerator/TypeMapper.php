@@ -18,8 +18,13 @@ final readonly class TypeMapper
     ) {
     }
 
-    public function typeToSchema(Type $type): Schema
-    {
+    /**
+     * @param array<string>|null $groups
+     */
+    public function typeToSchema(
+        Type $type,
+        ?array $groups = null,
+    ): Schema {
         if ($type instanceof Type\BackedEnumType) {
             /** @var class-string $className */
             $className = $type->getClassName();
@@ -45,7 +50,7 @@ final readonly class TypeMapper
             if ($type->isList()) {
                 return new Schema(
                     type: Schema\Type::ARRAY,
-                    items: $this->typeToSchema($type->getCollectionValueType()),
+                    items: $this->typeToSchema($type->getCollectionValueType(), $groups),
                 );
             }
 
@@ -62,14 +67,14 @@ final readonly class TypeMapper
             ) {
                 return new Schema(
                     type: Schema\Type::ARRAY,
-                    items: $this->typeToSchema($type->getCollectionValueType()),
+                    items: $this->typeToSchema($type->getCollectionValueType(), $groups),
                 );
             }
 
             if ($keyType instanceof Type\BuiltinType && TypeIdentifier::STRING === $keyType->getTypeIdentifier()) {
                 return new Schema(
                     type: Schema\Type::OBJECT,
-                    additionalProperties: $this->typeToSchema($type->getCollectionValueType()),
+                    additionalProperties: $this->typeToSchema($type->getCollectionValueType(), $groups),
                 );
             }
 
@@ -89,7 +94,7 @@ final readonly class TypeMapper
         }
 
         if ($type instanceof Type\NullableType) {
-            $wrappedSchema = $this->typeToSchema($type->getWrappedType());
+            $wrappedSchema = $this->typeToSchema($type->getWrappedType(), $groups);
 
             if (Undefined::VALUE !== $wrappedSchema->anyOf) {
                 /** @var array<Schema> $anyOf */
@@ -117,7 +122,7 @@ final readonly class TypeMapper
                 return new Schema(type: Schema\Type::STRING, format: 'date-time');
             }
 
-            return new Schema(ref: $this->componentsRegistry->getSchemaReference($className));
+            return new Schema(ref: $this->componentsRegistry->getSchemaReference($className, $groups));
         }
 
         if ($type instanceof Type\TemplateType) {
@@ -127,7 +132,7 @@ final readonly class TypeMapper
         if ($type instanceof Type\UnionType) {
             return new Schema(
                 anyOf: array_map(
-                    fn ($t) => $this->typeToSchema($t),
+                    fn ($t) => $this->typeToSchema($t, $groups),
                     $type->getTypes(),
                 )
             );
