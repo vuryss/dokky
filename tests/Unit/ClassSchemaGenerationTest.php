@@ -89,3 +89,40 @@ test(
             ->toThrow(Dokky\DokkyException::class);
     },
 );
+
+test(
+    'Schema generation with nested groups',
+    function () {
+        $componentsRegistry = new Dokky\ComponentsRegistry();
+        $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator(componentsRegistry: $componentsRegistry);
+
+        expect(
+            cleanObject(
+                $classSchemaGenerator->generate(Dokky\Tests\Datasets\Classes\Groups\RootObject::class, ['group1'])
+            )
+        )
+            ->toBeValidJsonSchema()
+            ->toEqual(
+                cleanObject(
+                    new Dokky\OpenApi\Schema(
+                        type: Dokky\OpenApi\Schema\Type::OBJECT,
+                        properties: [
+                            'directProperty2' => new Dokky\OpenApi\Schema(type: Dokky\OpenApi\Schema\Type::STRING),
+                            'nestedObject2' => new Dokky\OpenApi\Schema(ref: '#/components/schemas/NestedObject'),
+                            'arrayOfNestedObjects2' => new Dokky\OpenApi\Schema(
+                                type: Dokky\OpenApi\Schema\Type::ARRAY,
+                                items: new Dokky\OpenApi\Schema(ref: '#/components/schemas/NestedObject'),
+                            ),
+                        ],
+                        required: ['directProperty2', 'nestedObject2', 'arrayOfNestedObjects2'],
+                    )
+                )
+            )
+            ->and($componentsRegistry->getSchemaComponents())
+            ->toContain([
+                'className' => Dokky\Tests\Datasets\Classes\Groups\NestedObject::class,
+                'groups' => ['default', 'group1'],
+                'schemaName' => 'NestedObject',
+            ]);
+    }
+);

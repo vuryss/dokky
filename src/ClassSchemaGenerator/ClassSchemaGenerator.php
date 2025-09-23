@@ -95,7 +95,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
             }
 
             $finalName = $propertyContext->name ?? $propertyName;
-            $propertySchema = $this->generatePropertySchema($className, $propertyName, $reflectionProperty);
+            $propertySchema = $this->generatePropertySchema(
+                className: $className,
+                propertyName: $propertyName,
+                reflectionProperty: $reflectionProperty,
+                groups: $groups,
+            );
             $properties[$finalName] = $propertySchema;
 
             // Constraints
@@ -149,10 +154,14 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         return $schema;
     }
 
+    /**
+     * @param array<string>|null $groups
+     */
     private function generatePropertySchema(
         string $className,
         string $propertyName,
         \ReflectionProperty $reflectionProperty,
+        ?array $groups = null,
     ): Schema {
         $typeInfoType = $this->propertyInfoExtractor->getType($className, $propertyName);
 
@@ -163,7 +172,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $shortDescription = $this->propertyInfoExtractor->getShortDescription($className, $propertyName);
         $longDescription = $this->propertyInfoExtractor->getLongDescription($className, $propertyName);
         $description = trim(($shortDescription ?? '').($longDescription ? "\n".$longDescription : ''));
-        $schema = $this->typeMapper->typeToSchema($typeInfoType);
+        $schema = $this->typeMapper->typeToSchema($typeInfoType, $groups);
 
         $schema->default = $this->determineDefaultValue($reflectionProperty);
 
