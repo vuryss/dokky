@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/vuryss/dokky/compare/v2.0.0...v2.1.0) (2025-09-23)
+
+
+### Features
+
+* Adding support for nested groups ([#21](https://github.com/vuryss/dokky/issues/21)) ([61cc66a](https://github.com/vuryss/dokky/commit/61cc66ad93f0d20f4c7afff940fa32d26f16fa07))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency phpstan/phpstan to v2.1.28 ([#7](https://github.com/vuryss/dokky/issues/7)) ([9766624](https://github.com/vuryss/dokky/commit/976662446509d511aa3fbe3321f38938f28151af))
+
 ## [2.0.0](https://github.com/vuryss/dokky/compare/v1.6.0...v2.0.0) (2025-09-19)
 
 
