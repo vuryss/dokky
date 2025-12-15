@@ -14,14 +14,12 @@ readonly class ReflectionUtil
      * @return \ReflectionClass<T>
      *
      * @throws DokkyException
-     *
-     * @phpstan-ignore-next-line
      */
     public static function reflectionClass(string|object $classNameOrObject): \ReflectionClass
     {
         try {
             return new \ReflectionClass($classNameOrObject);
-        } catch (\ReflectionException $e) { // @phpstan-ignore-line
+        } catch (\ReflectionException $e) { // @phpstan-ignore catch.neverThrown
             throw new DokkyException(
                 sprintf(
                     'Class "%s" not found. Make sure the class exists and is able to be autoloaded.',
