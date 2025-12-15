@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0](https://github.com/vuryss/dokky/compare/v2.1.0...v3.0.0) (2025-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Updating libraries, removing support for old versions, removing deprecation ([#29](https://github.com/vuryss/dokky/issues/29))
+
+### Features
+
+* Updating libraries, removing support for old versions, removing deprecation ([#29](https://github.com/vuryss/dokky/issues/29)) ([bc99236](https://github.com/vuryss/dokky/commit/bc9923661ab0c608538aabbd651bad051b8742e2))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v6 ([#26](https://github.com/vuryss/dokky/issues/26)) ([88943b8](https://github.com/vuryss/dokky/commit/88943b8983e56eb4aa1839d13a4848e3061b0672))
+* **deps:** update update github actions ([#24](https://github.com/vuryss/dokky/issues/24)) ([3afab61](https://github.com/vuryss/dokky/commit/3afab61cbb45cd23f1c0e5515022d8d12d5ca36c))
+
 ## [2.1.0](https://github.com/vuryss/dokky/compare/v2.0.0...v2.1.0) (2025-09-23)
 
 
