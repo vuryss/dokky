@@ -52,7 +52,10 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         }
 
         if (1 === $attributeCount) {
-            return Util::formatGroups($groupsAttribute[0]->newInstance()->groups);
+            /** @var Groups $attribute */
+            $attribute = $groupsAttribute[0]->newInstance();
+
+            return Util::formatGroups($attribute->groups);
         }
 
         return [];
@@ -68,7 +71,10 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         $serializedNameAttribute = $property->getAttributes(\Dokky\Attribute\SerializedName::class);
 
         if (count($serializedNameAttribute) > 0) {
-            return $serializedNameAttribute[0]->newInstance()->serializedName;
+            /** @var \Dokky\Attribute\SerializedName $attribute */
+            $attribute = $serializedNameAttribute[0]->newInstance();
+
+            return $attribute->serializedName;
         }
 
         return null;
@@ -88,7 +94,10 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         }
 
         if (1 === count($attributes)) {
-            return $attributes[0]->newInstance();
+            /** @var Constraints $attribute */
+            $attribute = $attributes[0]->newInstance();
+
+            return $attribute;
         }
 
         return new Constraints();
@@ -99,6 +108,7 @@ readonly class AttributePropertyContextReader implements PropertyContextReaderIn
         $attributes = $property->getAttributes(\Dokky\Attribute\Property::class);
 
         if (1 === count($attributes)) {
+            /** @var \Dokky\Attribute\Property $attribute */
             $attribute = $attributes[0]->newInstance();
 
             return $attribute->schema;

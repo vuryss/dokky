@@ -76,7 +76,10 @@ test(
         $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator();
 
         expect(fn () => $classSchemaGenerator->generate(Dokky\Tests\Datasets\Classes\InvalidVariant6::class))
-            ->toThrow(Dokky\DokkyException::class);
+            ->toThrow(
+                Dokky\DokkyException::class,
+                'Failed to extract type for property "multipleKeyTypes" in class "Dokky\Tests\Datasets\Classes\InvalidVariant6", because of the following error: "bool|int" is not a valid array key type.'
+            );
     },
 );
 
@@ -86,7 +89,10 @@ test(
         $classSchemaGenerator = new Dokky\ClassSchemaGenerator\ClassSchemaGenerator();
 
         expect(fn () => $classSchemaGenerator->generate(Dokky\Tests\Datasets\Classes\InvalidVariant7::class))
-            ->toThrow(Dokky\DokkyException::class);
+            ->toThrow(
+                Dokky\DokkyException::class,
+                'Failed to extract type for property "invalidKeyType" in class "Dokky\Tests\Datasets\Classes\InvalidVariant7", because of the following error: "bool" is not a valid array key type.'
+            );
     },
 );
 

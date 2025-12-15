@@ -53,7 +53,10 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
         }
 
         if (1 === $attributeCount) {
-            return Util::formatGroups($symfonyGroupsAttribute[0]->newInstance()->getGroups());
+            /** @var \Symfony\Component\Serializer\Attribute\Groups $attribute */
+            $attribute = $symfonyGroupsAttribute[0]->newInstance();
+
+            return Util::formatGroups($attribute->groups);
         }
 
         return [];
@@ -73,7 +76,10 @@ readonly class SymfonyPropertyContextReader implements PropertyContextReaderInte
         );
 
         if (count($symfonySerializedNameAttribute) > 0) {
-            return $symfonySerializedNameAttribute[0]->newInstance()->getSerializedName();
+            /** @var \Symfony\Component\Serializer\Attribute\SerializedName $attribute */
+            $attribute = $symfonySerializedNameAttribute[0]->newInstance();
+
+            return $attribute->serializedName;
         }
 
         return null;

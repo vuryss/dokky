@@ -20,6 +20,7 @@ use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
+use Symfony\Component\TypeInfo\Exception\ExceptionInterface;
 
 readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
 {
@@ -163,7 +164,19 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         \ReflectionProperty $reflectionProperty,
         ?array $groups = null,
     ): Schema {
-        $typeInfoType = $this->propertyInfoExtractor->getType($className, $propertyName);
+        try {
+            $typeInfoType = $this->propertyInfoExtractor->getType($className, $propertyName);
+        } catch (ExceptionInterface $e) {
+            throw new DokkyException(
+                sprintf(
+                    'Failed to extract type for property "%s" in class "%s", because of the following error: %s',
+                    $propertyName,
+                    $className,
+                    $e->getMessage()
+                ),
+                previous: $e
+            );
+        }
 
         if (null === $typeInfoType) {
             throw new DokkyException(sprintf('No type found for property "%s" in class "%s"', $propertyName, $className));
@@ -275,12 +288,12 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $discriminatorMap = $reflectionClass->getAttributes(\Symfony\Component\Serializer\Attribute\DiscriminatorMap::class);
 
         if (1 === count($discriminatorMap)) {
+            /** @var \Symfony\Component\Serializer\Attribute\DiscriminatorMap $discriminatorMap */
             $discriminatorMap = $discriminatorMap[0]->newInstance();
 
             return $this->getDiscriminatorMapSchema(
-                propertyName: $discriminatorMap->getTypeProperty(),
-                /* @phpstan-ignore-next-line */
-                mapping: $discriminatorMap->getMapping(),
+                propertyName: $discriminatorMap->typeProperty,
+                mapping: $discriminatorMap->mapping,
                 groups: $groups,
             );
         }
