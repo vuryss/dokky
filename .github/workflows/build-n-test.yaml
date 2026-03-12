@@ -2,23 +2,33 @@ name: Tests
 on: [ push, pull_request ]
 permissions: read-all
 jobs:
-    tests:
+    quality:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    -   symfony-version: '7.4'
+                        dependency-script: deps:symfony74
+                    -   symfony-version: '8.x'
+                        dependency-script: deps:symfony8
+        name: Symfony ${{ matrix.symfony-version }}
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+            -   name: Set up php 8.5
+                uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+                with:
+                    php-version: '8.5'
+            -   name: Install dependencies
+                run: composer self-update && composer ${{ matrix.dependency-script }}
+            -   name: Run quality suite
+                run: composer qa
+    workflow-lint:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout
                 uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-            -   name: Set up php 8.4
-                uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
-                with:
-                    php-version: '8.4'
-            -   name: Install dependencies
-                run: composer self-update && composer install && composer dump-autoload
-            -   name: Run tests
-                run: vendor/bin/pest
-            -   name: Check code style
-                run: PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --diff --dry-run --using-cache=no
-            -   name: Check for code issues
-                run: vendor/bin/phpstan analyse --memory-limit 1G
             -   name: Check workflow files
                 run: |
                     bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)

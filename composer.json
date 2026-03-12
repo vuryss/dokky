@@ -16,15 +16,15 @@
     "require-dev": {
         "pestphp/pest": "^4.2",
         "justinrainbow/json-schema": "^6.6.3",
-        "symfony/serializer": "^7.4.2",
-        "vuryss/serializer": "^3.0",
-        "symfony/var-dumper": "^7.4",
+        "symfony/serializer": "^7.4.2 || ^8.0",
+        "vuryss/serializer": "^4.0",
+        "symfony/var-dumper": "^7.4 || ^8.0",
         "phpstan/phpstan": "^2.1.33",
         "captainhook/captainhook": "^5.27.4",
         "friendsofphp/php-cs-fixer": "^3.92",
         "captainhook/hook-installer": "^1.0.4",
         "ramsey/conventional-commits": "^1.6.0",
-        "symfony/validator": "^7.4.2"
+        "symfony/validator": "^7.4.2 || ^8.0"
     },
     "config": {
         "allow-plugins": {
@@ -33,13 +33,24 @@
         }
     },
     "require": {
-        "php": "^8.4",
-        "symfony/property-info": "^7.4.1",
+        "php": "^8.5",
+        "symfony/property-info": "^7.4.1 || ^8.0",
         "phpstan/phpdoc-parser": "^2.3",
-        "phpdocumentor/reflection-docblock": "^5.6.5"
+        "phpdocumentor/reflection-docblock": "^5.6.5 || ^6.0"
     },
     "scripts": {
         "test": "vendor/bin/pest",
-        "coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage-html .coverage"
+        "coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage-html .coverage",
+        "qa:cs": "vendor/bin/php-cs-fixer fix --diff --dry-run --using-cache=no",
+        "qa:stan": "vendor/bin/phpstan analyse --memory-limit 1G",
+        "qa": [
+            "@test",
+            "@qa:cs",
+            "@qa:stan"
+        ],
+        "deps:symfony74": "@composer update --no-interaction --with-all-dependencies \"symfony/property-info:^7.4.1\" \"symfony/serializer:^7.4.2\" \"symfony/validator:^7.4.2\" \"symfony/var-dumper:^7.4\" \"vuryss/serializer:^3.0\" \"phpdocumentor/reflection-docblock:^5.6.5\"",
+        "deps:symfony8": "@composer update --no-interaction --with-all-dependencies \"symfony/property-info:^8.0\" \"symfony/serializer:^8.0\" \"symfony/validator:^8.0\" \"symfony/var-dumper:^8.0\" \"vuryss/serializer:^4.0\" \"phpdocumentor/reflection-docblock:^6.0\"",
+        "deps:lowest": "@deps:symfony74",
+        "deps:highest": "@deps:symfony8"
     }
 }

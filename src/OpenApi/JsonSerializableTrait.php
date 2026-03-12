@@ -13,13 +13,25 @@ trait JsonSerializableTrait
      */
     public function jsonSerialize(): array
     {
-        $data = array_filter(get_object_vars($this), static fn ($value) => Undefined::VALUE !== $value);
+        /** @var array<string, mixed> $data */
+        $data = [];
+
+        foreach (get_object_vars($this) as $property => $value) {
+            if (Undefined::VALUE === $value) {
+                continue;
+            }
+
+            $data[(string) $property] = $value;
+        }
 
         if (isset($data['ref'])) {
             $data['$ref'] = $data['ref'];
             unset($data['ref']);
         }
 
-        return $data;
+        /** @var array<string, mixed> $result */
+        $result = $data;
+
+        return $result;
     }
 }

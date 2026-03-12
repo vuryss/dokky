@@ -22,6 +22,21 @@ To be used inside frameworks for automatic generation of API Documentation (simi
 - Supports Symfony serializer and validator attributes for seamless integration.
 - Generates OpenAPI Schemas based on PHP Classes and their properties. Correctly parses PHP Types and type annotations.
 
+## Symfony Compatibility
+
+Dokky supports Symfony 7.4 LTS and Symfony 8.x.
+
+For local validation inside the project container:
+
+```bash
+docker compose exec -T dokky composer deps:symfony8
+docker compose exec -T dokky composer qa
+docker compose exec -T dokky composer deps:symfony74
+docker compose exec -T dokky composer qa
+```
+
+The default local development flow should use `composer deps:symfony8`, while CI runs both dependency sets to verify the compatibility matrix.
+
 ## Example usage:
 
 ### Overwriting single property's schema

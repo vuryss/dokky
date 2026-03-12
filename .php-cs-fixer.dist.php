@@ -12,5 +12,6 @@ return new PhpCsFixer\Config()
         'single_line_throw' => false,
     ])
     ->setFinder($finder)
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
 ;

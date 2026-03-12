@@ -46,6 +46,10 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
         $this->typeMapper = new TypeMapper($this->componentsRegistry);
     }
 
+    /**
+     * @param class-string       $className
+     * @param array<string>|null $groups
+     */
     public function generate(string $className, ?array $groups = null): Schema
     {
         if (enum_exists($className)) {
@@ -156,6 +160,7 @@ readonly class ClassSchemaGenerator implements ClassSchemaGeneratorInterface
     }
 
     /**
+     * @param class-string       $className
      * @param array<string>|null $groups
      */
     private function generatePropertySchema(

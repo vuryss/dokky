@@ -1,4 +1,4 @@
-FROM php:8.4-cli-alpine3.21
+FROM php:8.5-cli-alpine3.23@sha256:26c79a16621a4dc56b0fbb2fa94df4110c972b19855e5aed1cf952ecfa466785
 
 RUN apk add --no-cache bash
 
