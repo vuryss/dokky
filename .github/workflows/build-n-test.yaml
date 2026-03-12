@@ -9,9 +9,9 @@ jobs:
             matrix:
                 include:
                     -   symfony-version: '7.4'
-                        dependency-script: deps:symfony74
+                        dependency-script: deps:lowest
                     -   symfony-version: '8.x'
-                        dependency-script: deps:symfony8
+                        dependency-script: deps:highest
         name: Symfony ${{ matrix.symfony-version }}
         steps:
             -   name: Checkout

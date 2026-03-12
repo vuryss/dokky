@@ -29,13 +29,15 @@ Dokky supports Symfony 7.4 LTS and Symfony 8.x.
 For local validation inside the project container:
 
 ```bash
-docker compose exec -T dokky composer deps:symfony8
+docker compose exec -T dokky composer deps:highest
 docker compose exec -T dokky composer qa
-docker compose exec -T dokky composer deps:symfony74
+docker compose exec -T dokky composer deps:lowest
 docker compose exec -T dokky composer qa
 ```
 
-The default local development flow should use `composer deps:symfony8`, while CI runs both dependency sets to verify the compatibility matrix.
+The default local development flow should use `composer deps:highest`, while CI runs both the lowest and highest supported dependency sets to verify the compatibility matrix.
+
+`composer deps:lowest` only moves the Symfony dependency family to its lowest supported versions, while `composer deps:highest` refreshes the full dependency graph to the newest allowed versions.
 
 ## Example usage:
 
