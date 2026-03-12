@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.0.0](https://github.com/vuryss/dokky/compare/v3.0.0...v4.0.0) (2026-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Support for PHP 8.5 only, updated library versions
+
+### Features
+
+* Adding support and tests for Symfony 8.0, keeping support for 7.4 LTS, updating libs ([22716d4](https://github.com/vuryss/dokky/commit/22716d45af0effea8fab6ffe68178b07ba49e2ad))
+* manual major bump ([e06052d](https://github.com/vuryss/dokky/commit/e06052d62b31bdc202c18bbc393d1760e9a6f9b4))
+* Updating libs, better testing multiple library versions ([86e0c4f](https://github.com/vuryss/dokky/commit/86e0c4f303858cd0587528f8e6ac41a9040a22a9))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v6.0.2 ([#31](https://github.com/vuryss/dokky/issues/31)) ([efea18b](https://github.com/vuryss/dokky/commit/efea18b11b18f5ad61cd4d2563f37767447bd3a0))
+
 ## [3.0.0](https://github.com/vuryss/dokky/compare/v2.1.0...v3.0.0) (2025-12-15)
 
 
