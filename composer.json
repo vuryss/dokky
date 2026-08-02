@@ -14,7 +14,7 @@
         }
     },
     "require-dev": {
-        "pestphp/pest": "^4.4",
+        "pestphp/pest": "^5.0",
         "justinrainbow/json-schema": "^6.7.2",
         "symfony/serializer": "^7.4.2 || ^8.0",
         "vuryss/serializer": "^4.0",
